@@ -990,10 +990,6 @@
               <input type="number" step="0.01" id="edit-emp-basic" required placeholder="0.00" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
             </div>
             <div>
-              <label id="lbl-basic-rate" class="block font-semibold mb-1">Kadar Upah Sehari (RM/Hari) *</label>
-              <input type="number" step="0.01" id="edit-emp-basic" required oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
-            </div>
-            <div>
               <label class="block font-semibold mb-1">Hari Bekerja (Kitaran 26–25)</label>
               <input type="number" step="0.5" min="0" max="31" id="edit-emp-days-worked" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
             </div>
@@ -1006,20 +1002,35 @@
 
         <!-- Section C: OT & Imbuhan -->
         <div class="space-y-3">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400 border-b border-slate-200 dark:border-slate-800 pb-1">C. Kerja Lebih Masa (OT) &amp; Imbuhan Tambahan (Elaun Lalai RM 0.00)</h4>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400 border-b border-slate-200 dark:border-slate-800 pb-1">C. Kerja Lebih Masa (OT) Mengikut Jadual Kilang &amp; Imbuhan (Elaun Lalai RM 0.00)</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div>
-              <label class="block font-semibold mb-1">Jam OT Biasa (1.5x)</label>
-              <input type="number" step="0.5" min="0" id="edit-emp-ot15" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              <label class="block font-semibold mb-1">OT Isnin &amp; Selasa (1.5x)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-ot-mon-tue" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              <div id="rate-ot-mon-tue" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Kadar: RM 0.00/jam</div>
             </div>
             <div>
-              <label class="block font-semibold mb-1">Jam OT Hari Rehat (2.0x)</label>
+              <label class="block font-semibold mb-1">OT Rabu, Khamis &amp; Sabtu (1.5x)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-ot-wed-thu-sat" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              <div id="rate-ot-wed-thu-sat" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Kadar: RM 0.00/jam</div>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">OT Jumaat (1.5x)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-ot-fri" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              <div id="rate-ot-fri" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Kadar: RM 0.00/jam</div>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">OT Hari Rehat Ahad (2.0x)</label>
               <input type="number" step="0.5" min="0" id="edit-emp-ot20" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              <div id="rate-ot-20" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Kadar: RM 0.00/jam</div>
             </div>
             <div>
-              <label class="block font-semibold mb-1">Jam OT Cuti Umum (3.0x)</label>
+              <label class="block font-semibold mb-1">OT Cuti Umum (3.0x)</label>
               <input type="number" step="0.5" min="0" id="edit-emp-ot30" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              <div id="rate-ot-30" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Kadar: RM 0.00/jam</div>
             </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
             <div>
               <label class="block font-semibold mb-1">Elaun (RM — Lalai 0)</label>
               <input type="number" step="0.01" min="0" id="edit-emp-allowance" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
@@ -1219,7 +1230,7 @@
       if (!window.currentUser || !db) return;
       try {
         const periodKey = `${document.getElementById("payroll-year").value}-${document.getElementById("payroll-month").value}`;
-        const docRef = doc(db, "users", window.currentUser.uid, "payroll", periodKey);
+        const docRef = doc(db, "users", window.currentUser.uid, "employees", periodKey);
         await setDoc(docRef, {
           employees: window.employees,
           settings: window.settings,
@@ -1243,7 +1254,7 @@
       if (!window.currentUser || !db) return;
       try {
         const periodKey = `${document.getElementById("payroll-year").value}-${document.getElementById("payroll-month").value}`;
-        const docRef = doc(db, "users", window.currentUser.uid, "payroll", periodKey);
+        const docRef = doc(db, "users", window.currentUser.uid, "employees", periodKey);
         const snap = await getDoc(docRef);
         if (snap.exists()) {
           const data = snap.data();
@@ -1635,17 +1646,40 @@
 
       const hrp = orp / (Number(s.hrpHours) || 8);
 
+      // Kadar OT Sejam mengikut Jadual Kilang SCK Wooden:
+      // Khas untuk Gaji Basic RM 1,700.00 (atau kadar harian RM 65.40):
+      // - Isnin & Selasa (8.0 jam/hari): RM 12.26 / jam
+      // - Rabu, Khamis & Sabtu (7.5 jam/hari): RM 13.08 / jam
+      // - Jumaat (6.5 jam/hari): RM 15.09 / jam
+      // Bagi gaji pokok lain, kadar dikira secara automatik berdasarkan ORP individu masing-masing.
+      const otNormalMult = Number(s.otNormal) || 1.5;
+      const isBase1700Standard =
+        (emp.payType === "MONTHLY" && Math.abs(basicInput - 1700) < 0.01) ||
+        (emp.payType === "DAILY" && Math.abs(basicInput - 65.40) < 0.01);
+
+      const rateOtMonTue = isBase1700Standard ? 12.26 : (orp / 8.0) * otNormalMult;
+      const rateOtWedThuSat = isBase1700Standard ? 13.08 : (orp / 7.5) * otNormalMult;
+      const rateOtFri = isBase1700Standard ? 15.09 : (orp / 6.5) * otNormalMult;
+      const rateOt20 = (orp / 8.0) * (Number(s.otRest) || 2.0);
+      const rateOt30 = (orp / 8.0) * (Number(s.otPublic) || 3.0);
+
       // Kerja Lebih Masa (OT)
-      const ot15Hours = Number(emp.ot15Hours) || 0;
+      const otMonTueHours = Number(emp.otMonTueHours ?? emp.ot15Hours) || 0;
+      const otWedThuSatHours = Number(emp.otWedThuSatHours) || 0;
+      const otFriHours = Number(emp.otFriHours) || 0;
       const ot20Hours = Number(emp.ot20Hours) || 0;
       const ot30Hours = Number(emp.ot30Hours) || 0;
 
-      const ot15Pay = Number((hrp * (Number(s.otNormal) || 1.5) * ot15Hours).toFixed(2));
-      const ot20Pay = Number((hrp * (Number(s.otRest) || 2.0) * ot20Hours).toFixed(2));
-      const ot30Pay = Number((hrp * (Number(s.otPublic) || 3.0) * ot30Hours).toFixed(2));
-      const totalOTPay = Number((ot15Pay + ot20Pay + ot30Pay).toFixed(2));
+      const otMonTuePay = Number((rateOtMonTue * otMonTueHours).toFixed(2));
+      const otWedThuSatPay = Number((rateOtWedThuSat * otWedThuSatHours).toFixed(2));
+      const otFriPay = Number((rateOtFri * otFriHours).toFixed(2));
+      const ot20Pay = Number((rateOt20 * ot20Hours).toFixed(2));
+      const ot30Pay = Number((rateOt30 * ot30Hours).toFixed(2));
+      const totalOTPay = Number((otMonTuePay + otWedThuSatPay + otFriPay + ot20Pay + ot30Pay).toFixed(2));
+      const totalOTHours = otMonTueHours + otWedThuSatHours + otFriHours + ot20Hours + ot30Hours;
 
-      // Imbuhan Tambahan (Elaun lalai RM 0.00)
+      // Gaji pokok bersih selepas UPL & imbuhan tambahan
+      const netEarnedBasic = Math.max(0, Number((earnedBasic - uplDeduction).toFixed(2)));
       const allowance = Number(emp.allowance) || 0;
       const commission = Number(emp.commission) || 0;
       const reward = Number(emp.reward) || 0;
@@ -1654,10 +1688,9 @@
       const encashAlPay = Number((orp * encashAlDays).toFixed(2));
       const angpaw = Number(emp.angpaw) || 0;
 
-      const netEarnedBasic = Math.max(0, Number((earnedBasic - uplDeduction).toFixed(2)));
       const grossPay = Number((netEarnedBasic + totalOTPay + allowance + commission + reward + bonus + encashAlPay + angpaw).toFixed(2));
 
-      // Subjek Berkanun berdasarkan matriks rasmi Malaysia
+      // Subjek caruman berkanun mengikut jadual rasmi Malaysia
       const epfSubject = netEarnedBasic + allowance + commission + reward + bonus + encashAlPay;
       const socsoEisSubject = netEarnedBasic + totalOTPay + allowance + commission + reward + encashAlPay;
       const hrdfSubject = netEarnedBasic + allowance + encashAlPay;
@@ -1719,13 +1752,21 @@
       return {
         orp,
         hrp,
+        rateOtMonTue,
+        rateOtWedThuSat,
+        rateOtFri,
+        rateOt20,
+        rateOt30,
         earnedBasic,
         uplDeduction,
         netEarnedBasic,
-        ot15Pay,
+        otMonTuePay,
+        otWedThuSatPay,
+        otFriPay,
         ot20Pay,
         ot30Pay,
         totalOTPay,
+        totalOTHours,
         allowance,
         commission,
         reward,
@@ -1969,7 +2010,9 @@
               basicSalary: isNaN(basicSalary) ? defaultBasic : basicSalary,
               daysWorked: cols[14] !== undefined && cols[14] !== "" ? Number(cols[14]) : cycle.workingDaysMonSat,
               uplDays: 0,
-              ot15Hours: Number(cols[15]) || 0,
+              otMonTueHours: Number(cols[15]) || 0,
+              otWedThuSatHours: 0,
+              otFriHours: 0,
               ot20Hours: Number(cols[16]) || 0,
               ot30Hours: Number(cols[17]) || 0,
               allowance: Number(cols[18]) || 0,
@@ -2214,14 +2257,14 @@
           </td>
           <td class="py-2.5 px-3 text-right">
             <div class="flex items-center justify-end gap-1">
-              <input type="number" step="0.5" min="0" value="${emp.ot15Hours || 0}"
-                onchange="quickUpdateEmployeeField('${emp.id}', 'ot15Hours', this.value)"
-                title="Jam OT 1.5x"
-                aria-label="Jam OT 1.5x ${emp.name}"
+              <input type="number" step="0.5" min="0" value="${emp.otMonTueHours ?? emp.ot15Hours ?? 0}"
+                onchange="quickUpdateEmployeeField('${emp.id}', 'otMonTueHours', this.value)"
+                title="Jam OT Isnin & Selasa (1.5x)"
+                aria-label="Jam OT Isnin & Selasa ${emp.name}"
                 class="w-14 px-1.5 py-1 text-right font-semibold rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500" />
               <span class="text-[10px] text-slate-400">j</span>
             </div>
-            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">${formatRM(calc.totalOTPay)}</div>
+            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">${formatRM(calc.totalOTPay)} (${calc.totalOTHours}j)</div>
           </td>
           <td class="py-2.5 px-3 text-right text-rose-600 dark:text-rose-400 font-semibold">
             <div>-${formatRM(calc.totalDeductions)}</div>
@@ -2306,8 +2349,7 @@
         { label: basicLabel, amount: formatNum(calc.netEarnedBasic) }
       ];
       if (calc.totalOTPay > 0) {
-        const totalHrs = (Number(emp.ot15Hours) || 0) + (Number(emp.ot20Hours) || 0) + (Number(emp.ot30Hours) || 0);
-        earningsRows.push({ label: `OVERTIME (${totalHrs} HRS)`, amount: formatNum(calc.totalOTPay) });
+        earningsRows.push({ label: `OVERTIME (${calc.totalOTHours} HRS)`, amount: formatNum(calc.totalOTPay) });
       }
       if (calc.allowance > 0) {
         earningsRows.push({ label: "ALLOWANCE", amount: formatNum(calc.allowance) });
@@ -2626,9 +2668,9 @@
       document.getElementById("edit-emp-paytype").value = emp.payType;
       document.getElementById("edit-emp-basic").value = emp.basicSalary;
       document.getElementById("edit-emp-days-worked").value = emp.daysWorked ?? 26;
-      document.getElementById("edit-emp-upl").value = emp.uplDays ?? 0;
-
-      document.getElementById("edit-emp-ot15").value = emp.ot15Hours ?? 0;
+      document.getElementById("edit-emp-ot-mon-tue").value = emp.otMonTueHours ?? emp.ot15Hours ?? 0;
+      document.getElementById("edit-emp-ot-wed-thu-sat").value = emp.otWedThuSatHours ?? 0;
+      document.getElementById("edit-emp-ot-fri").value = emp.otFriHours ?? 0;
       document.getElementById("edit-emp-ot20").value = emp.ot20Hours ?? 0;
       document.getElementById("edit-emp-ot30").value = emp.ot30Hours ?? 0;
       document.getElementById("edit-emp-allowance").value = emp.allowance ?? 0;
@@ -2678,9 +2720,9 @@
       document.getElementById("edit-emp-paytype").value = "DAILY";
       document.getElementById("edit-emp-basic").value = "";
       document.getElementById("edit-emp-days-worked").value = cycle.workingDaysMonSat || 26;
-      document.getElementById("edit-emp-upl").value = 0;
-
-      document.getElementById("edit-emp-ot15").value = 0;
+      document.getElementById("edit-emp-ot-mon-tue").value = 0;
+      document.getElementById("edit-emp-ot-wed-thu-sat").value = 0;
+      document.getElementById("edit-emp-ot-fri").value = 0;
       document.getElementById("edit-emp-ot20").value = 0;
       document.getElementById("edit-emp-ot30").value = 0;
       document.getElementById("edit-emp-allowance").value = 0;
@@ -2730,7 +2772,9 @@
         basicSalary: Number(document.getElementById("edit-emp-basic").value) || 0,
         daysWorked: Number(document.getElementById("edit-emp-days-worked").value) || 0,
         uplDays: Number(document.getElementById("edit-emp-upl").value) || 0,
-        ot15Hours: Number(document.getElementById("edit-emp-ot15").value) || 0,
+        otMonTueHours: Number(document.getElementById("edit-emp-ot-mon-tue").value) || 0,
+        otWedThuSatHours: Number(document.getElementById("edit-emp-ot-wed-thu-sat").value) || 0,
+        otFriHours: Number(document.getElementById("edit-emp-ot-fri").value) || 0,
         ot20Hours: Number(document.getElementById("edit-emp-ot20").value) || 0,
         ot30Hours: Number(document.getElementById("edit-emp-ot30").value) || 0,
         allowance: Number(document.getElementById("edit-emp-allowance").value) || 0,
@@ -2754,6 +2798,11 @@
     window.recalcModalPreview = function () {
       const tempEmp = getModalFormObject();
       const calc = calculateEmployeePayroll(tempEmp);
+      document.getElementById("rate-ot-mon-tue").textContent = `Kadar: ${formatRM(calc.rateOtMonTue)}/jam`;
+      document.getElementById("rate-ot-wed-thu-sat").textContent = `Kadar: ${formatRM(calc.rateOtWedThuSat)}/jam`;
+      document.getElementById("rate-ot-fri").textContent = `Kadar: ${formatRM(calc.rateOtFri)}/jam`;
+      document.getElementById("rate-ot-20").textContent = `Kadar: ${formatRM(calc.rateOt20)}/jam`;
+      document.getElementById("rate-ot-30").textContent = `Kadar: ${formatRM(calc.rateOt30)}/jam`;
       document.getElementById("prev-hrp").textContent = formatRM(calc.hrp);
       document.getElementById("prev-ot").textContent = formatRM(calc.totalOTPay);
       document.getElementById("prev-gross").textContent = formatRM(calc.grossPay);
