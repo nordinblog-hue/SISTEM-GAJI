@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="ms" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SISTEM GAJI & PENGURUSAN PAYROLL — SCK WOODEN INDUSTRIES SDN BHD</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#16a34a',
+              600: '#15803d',
+              700: '#166534',
+              800: '#14532d',
+              900: '#052e16'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.7);
+    }
+
+    /* Print A4 Payslip Rules */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only-container {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      #payslip-a4-sheet {
+        border: 1.5px solid #1e293b !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+
+  <!-- Toast / Notification Container (Menggantikan alert()) -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0 no-print"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between py-3 gap-3">
+        <!-- Brand & Company Title -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-amber-800 text-white flex items-center justify-center font-extrabold text-lg shadow-md">
+            SCK
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                SISTEM GAJI & PAYROLL
+              </h1>
+              <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700">
+                Akta Kerja 1955 • RM1,700 Min
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              SCK WOODEN INDUSTRIES SDN BHD (200001026349 / 528956-0) • Cherating, Kuantan
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Controls: Period Selector, Dark Mode, Firebase Auth -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Month & Year Selector -->
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-1 border border-slate-200 dark:border-slate-700">
+            <select id="payroll-month" onchange="onPeriodChange()" class="bg-transparent text-xs sm:text-sm font-semibold px-2 py-1 rounded-lg focus:outline-none text-slate-800 dark:text-slate-100">
+              <option value="01">Januari</option>
+              <option value="02">Februari</option>
+              <option value="03">Mac</option>
+              <option value="04">April</option>
+              <option value="05">Mei</option>
+              <option value="06">Jun</option>
+              <option value="07">Julai</option>
+              <option value="08">Ogos</option>
+              <option value="09">September</option>
+              <option value="10">Oktober</option>
+              <option value="11" selected>November</option>
+              <option value="12">Disember</option>
+            </select>
+            <select id="payroll-year" onchange="onPeriodChange()" class="bg-transparent text-xs sm:text-sm font-semibold px-2 py-1 rounded-lg focus:outline-none text-slate-800 dark:text-slate-100">
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button onclick="toggleTheme()" title="Tukar Mod Gelap / Cerah" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+            <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-slate-700"></i>
+          </button>
+
+          <!-- Firebase Auth / Guest Badge -->
+          <div id="auth-status-box" class="flex items-center gap-2">
+            <span id="sync-badge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              Mod Tetamu (Lokal)
+            </span>
+            <button id="btn-google-login" onclick="handleGoogleLogin()" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 shadow-sm transition">
+              <svg class="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+                <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.5H12v4.8h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                <path fill="#FBBC05" d="M5.3 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.6 7.4C.6 9.4 0 11.6 0 14s.6 4.6 1.6 6.6l3.7-2.8z"/>
+                <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 21.4 7.4 24 12 24z"/>
+              </svg>
+              <span>Log Masuk Google</span>
+            </button>
+            <button id="btn-google-logout" onclick="handleGoogleLogout()" class="hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex gap-1.5 overflow-x-auto pb-2 pt-1 no-scrollbar" aria-label="Menu Utama">
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn active flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-emerald-600 text-white shadow-sm">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>1. Dashboard & Ringkasan</span>
+        </button>
+        <button onclick="switchTab('employees')" id="tab-btn-employees" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>2. Senarai & Edit Pekerja</span>
+          <span id="badge-emp-count" class="px-1.5 py-0.5 text-[10px] rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200">67</span>
+        </button>
+        <button onclick="switchTab('payslip')" id="tab-btn-payslip" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>3. Slip Gaji A4 & WhatsApp</span>
+        </button>
+        <button onclick="switchTab('statutory')" id="tab-btn-statutory" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="landmark" class="w-4 h-4"></i>
+          <span>4. Laporan Berkanun (EPF/SOCSO 24J/EIS/PCB/HRDF)</span>
+        </button>
+        <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="sliders" class="w-4 h-4"></i>
+          <span>5. Tetapan Polisi & Akta</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ===================================================================== -->
+    <!-- TAB 1: DASHBOARD & RINGKASAN PAYROLL                                  -->
+    <!-- ===================================================================== -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
+      <!-- Minimum Wage / Compliance Banner -->
+      <div id="compliance-alert-banner" class="hidden rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+          <div>
+            <h3 class="text-sm font-bold text-amber-900 dark:text-amber-200">Peringatan Pematuhan Gaji Minimum RM 1,700.00 (Perintah Gaji Minimum 2025/2026)</h3>
+            <p id="compliance-alert-text" class="text-xs text-amber-800 dark:text-amber-300 mt-0.5"></p>
+          </div>
+        </div>
+        <button onclick="autoAdjustMinimumWage()" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold whitespace-nowrap shadow-sm transition">
+          Selaraskan Semua ke RM 1,700.00
+        </button>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Jumlah Gaji Kasar</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <i data-lucide="banknote" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpi-gross" class="mt-3 text-2xl font-extrabold text-slate-900 dark:text-white">RM 0.00</div>
+          <p id="kpi-gross-sub" class="mt-1 text-xs text-slate-500 dark:text-slate-400">Termasuk Pokok/Harian, OT & Elaun</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Jumlah Gaji Bersih (Net Pay)</span>
+            <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <i data-lucide="wallet" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpi-net" class="mt-3 text-2xl font-extrabold text-blue-600 dark:text-blue-400">RM 0.00</div>
+          <p id="kpi-net-sub" class="mt-1 text-xs text-slate-500 dark:text-slate-400">Sedia untuk pindahan bank pekerja</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Caruman Majikan (Berkanun)</span>
+            <div class="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpi-employer" class="mt-3 text-2xl font-extrabold text-purple-600 dark:text-purple-400">RM 0.00</div>
+          <p id="kpi-employer-sub" class="mt-1 text-xs text-slate-500 dark:text-slate-400">EPF + SOCSO 24J + EIS + HRDF (1%)</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Kos Keseluruhan Syarikat</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <i data-lucide="building-2" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div id="kpi-total-cost" class="mt-3 text-2xl font-extrabold text-slate-900 dark:text-white">RM 0.00</div>
+          <p id="kpi-emp-breakdown" class="mt-1 text-xs text-slate-500 dark:text-slate-400">67 Pekerja Aktif</p>
+        </div>
+      </div>
+
+      <!-- Category Breakdown & Quick Actions -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Category Table -->
+        <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-white">Pecahan Kos Gaji Mengikut Kategori Pekerja</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Rekod Pekerja Aktif SCK Wooden Industries Sdn Bhd (PEKERJA 2026)</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="exportPayrollCSV()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Eksport CSV Bank / Payroll</span>
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/60 text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                  <th class="py-3 px-4">Kategori Pekerja</th>
+                  <th class="py-3 px-4 text-center">Bil. Pekerja</th>
+                  <th class="py-3 px-4 text-right">Gaji Pokok & Elaun</th>
+                  <th class="py-3 px-4 text-right">Jumlah OT</th>
+                  <th class="py-3 px-4 text-right">Gaji Bersih</th>
+                  <th class="py-3 px-4 text-right">Kos Majikan</th>
+                </tr>
+              </thead>
+              <tbody id="dept-summary-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Quick Actions & Contract Summary Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i>
+              <span>Ringkasan Polisi & Akta Kerja</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Berdasarkan Kontrak SCK & Pindaan Akta Kerja 1955</p>
+
+            <ul class="mt-4 space-y-2.5 text-xs">
+              <li class="flex items-start justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">Gaji Minimum Semasa:</span>
+                <span id="dash-min-wage" class="font-bold text-emerald-600 dark:text-emerald-400">RM 1,700.00 / bln</span>
+              </li>
+              <li class="flex items-start justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">Formula ORP / HRP:</span>
+                <span class="font-bold text-slate-800 dark:text-slate-200">Gaji ÷ 26 hari ÷ 8 jam</span>
+              </li>
+              <li class="flex items-start justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">Kadar OT (Klausa 6):</span>
+                <span class="font-bold text-slate-800 dark:text-slate-200">1.5x | 2.0x (Ahad) | 3.0x (PH)</span>
+              </li>
+              <li class="flex items-start justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">PERKESO (SOCSO):</span>
+                <span class="font-bold text-blue-600 dark:text-blue-400">Lindung 24 Jam (Siling RM6,000)</span>
+              </li>
+              <li class="flex items-start justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">KWSP Warga Asing:</span>
+                <span class="font-bold text-slate-800 dark:text-slate-200">2% Pekerja / 2% Majikan</span>
+              </li>
+              <li class="flex items-start justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">Kelayakan AL Kontrak:</span>
+                <span class="font-bold text-slate-800 dark:text-slate-200">&lt;1thn: 0 | 1-2: 8 | 2-5: 12 | ≥5: 16</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
+            <button onclick="switchTab('employees')" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center justify-center gap-2">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+              <span>Urus & Edit Rekod Pekerja</span>
+            </button>
+            <button onclick="resetMasterEmployeeList()" class="w-full py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition flex items-center justify-center gap-2">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span>Set Semula Senarai Pekerja 2026</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 2: SENARAI & EDIT GAJI PEKERJA                                    -->
+    <!-- ===================================================================== -->
+    <section id="tab-employees" class="tab-content hidden space-y-4">
+      <!-- Filter & Action Toolbar -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2 flex-1">
+          <!-- Search Input -->
+          <div class="relative flex-1 min-w-[220px]">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="filter-search" oninput="renderEmployeeTable()" placeholder="Cari nama, ID SCK, No. IC/Passport, bahagian kerja..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+
+          <!-- Category Filter -->
+          <select id="filter-category" onchange="renderEmployeeTable()" class="px-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="ALL">Semua Kategori</option>
+            <option value="GENERAL WORKERS (INDONESIAN)">GENERAL WORKERS (INDONESIAN)</option>
+            <option value="GENERAL WORKERS (MYANMAR)">GENERAL WORKERS (MYANMAR)</option>
+            <option value="GENERAL WORKERS (NEPAL)">GENERAL WORKERS (NEPAL)</option>
+            <option value="GENERAL WORKERS (LOCAL)">GENERAL WORKERS (LOCAL)</option>
+            <option value="STAFF">STAFF</option>
+          </select>
+
+          <!-- Pay Type Filter -->
+          <select id="filter-paytype" onchange="renderEmployeeTable()" class="px-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="ALL">Semua Jenis Gaji</option>
+            <option value="MONTHLY">Gaji Bulanan (Monthly)</option>
+            <option value="DAILY">Gaji Harian (Daily Rated)</option>
+          </select>
+
+          <!-- Nationality Filter -->
+          <select id="filter-citizen" onchange="renderEmployeeTable()" class="px-3 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="ALL">Semua Warganegara</option>
+            <option value="LOCAL">Warganegara Malaysia</option>
+            <option value="FOREIGN">Warga Asing (Indonesia/Myanmar/Nepal/Thailand)</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openAddEmployeeModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Tambah Pekerja</span>
+          </button>
+          <button onclick="exportPayrollCSV()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            <span>Eksport CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Employee Table Card -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <span id="table-showing-text">Menunjukkan 67 daripada 67 pekerja</span>
+          <span>Klik butang <strong>Edit</strong> untuk ubah gaji, hari kerja, OT, elaun & cuti AL/MC</span>
+        </div>
+        <div class="overflow-x-auto max-h-[68vh]">
+          <table class="w-full text-left border-collapse">
+            <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-slate-800 text-[11px] font-bold uppercase text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th class="py-3 px-3">ID & Nama Pekerja</th>
+                <th class="py-3 px-3">Bahagian / Jawatan & Kategori</th>
+                <th class="py-3 px-3">Jenis & Kadar</th>
+                <th class="py-3 px-3 text-right">Gaji Pokok / Hari</th>
+                <th class="py-3 px-3 text-right">OT (1.5x/2x/3x)</th>
+                <th class="py-3 px-3 text-right">Elaun & Lain</th>
+                <th class="py-3 px-3 text-right">Potongan Berkanun</th>
+                <th class="py-3 px-3 text-right">Gaji Bersih</th>
+                <th class="py-3 px-3 text-center">Baki AL / MC</th>
+                <th class="py-3 px-3 text-center">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="employee-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 3: SLIP GAJI A4 & WHATSAPP                                        -->
+    <!-- ===================================================================== -->
+    <section id="tab-payslip" class="tab-content hidden space-y-5">
+      <!-- Payslip Selector & Action Bar -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 no-print">
+        <div class="flex items-center gap-3 flex-1">
+          <label for="payslip-employee-select" class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 whitespace-nowrap">Pilih Pekerja:</label>
+          <select id="payslip-employee-select" onchange="renderPayslipPreview()" class="w-full max-w-md px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"></select>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openEditModalFromPayslip()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            <span>Edit Gaji Pekerja Ini</span>
+          </button>
+          <button onclick="sharePayslipWhatsApp()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-green-600 hover:bg-green-700 text-white shadow-sm transition">
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+            <span>Kongsi WhatsApp</span>
+          </button>
+          <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-sm transition">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Cetak Slip A4</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- A4 Payslip Sheet Container -->
+      <div class="print-only-container flex justify-center">
+        <div id="payslip-a4-sheet" class="w-full max-w-[820px] bg-white text-slate-900 rounded-2xl border border-slate-300 shadow-lg p-6 sm:p-8 space-y-5">
+          <!-- Header Syarikat -->
+          <div class="flex flex-col sm:flex-row justify-between items-start border-b-2 border-slate-800 pb-4 gap-4">
+            <div class="flex items-start gap-3">
+              <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-xl shrink-0">
+                SCK
+              </div>
+              <div>
+                <h2 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">SCK WOODEN INDUSTRIES SDN BHD</h2>
+                <p class="text-[11px] font-semibold text-slate-600">No. Pendaftaran: 200001026349 (528956-0)</p>
+                <p class="text-[11px] text-slate-600">Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang Darul Makmur</p>
+                <p class="text-[11px] text-slate-600">Tel: 09-581 9075 / 581 9654 | E-mel: info@sck.com.my</p>
+              </div>
+            </div>
+            <div class="sm:text-right bg-slate-100 px-3.5 py-2 rounded-xl border border-slate-300">
+              <div class="text-xs font-extrabold uppercase tracking-wider text-slate-900">PENYATA GAJI / PAYSLIP</div>
+              <div id="ps-period" class="text-sm font-bold text-emerald-700">NOVEMBER 2026</div>
+              <div class="text-[10px] text-slate-500 uppercase">Sulit & Persendirian</div>
+            </div>
+          </div>
+
+          <!-- Maklumat Pekerja -->
+          <div id="ps-employee-details" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200"></div>
+
+          <!-- Jadual Pendapatan & Potongan -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Pendapatan (Earnings) -->
+            <div class="border border-slate-300 rounded-xl overflow-hidden flex flex-col justify-between">
+              <div>
+                <div class="bg-slate-800 text-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider flex justify-between">
+                  <span>Pendapatan (Earnings)</span>
+                  <span>Amaun (RM)</span>
+                </div>
+                <div id="ps-earnings-list" class="p-3.5 space-y-2 text-xs"></div>
+              </div>
+              <div class="bg-slate-100 px-3.5 py-2.5 border-t border-slate-300 flex justify-between text-xs font-extrabold">
+                <span>JUMLAH PENDAPATAN KASAR</span>
+                <span id="ps-total-gross">RM 0.00</span>
+              </div>
+            </div>
+
+            <!-- Potongan (Deductions) -->
+            <div class="border border-slate-300 rounded-xl overflow-hidden flex flex-col justify-between">
+              <div>
+                <div class="bg-slate-800 text-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider flex justify-between">
+                  <span>Potongan (Deductions)</span>
+                  <span>Amaun (RM)</span>
+                </div>
+                <div id="ps-deductions-list" class="p-3.5 space-y-2 text-xs"></div>
+              </div>
+              <div class="bg-slate-100 px-3.5 py-2.5 border-t border-slate-300 flex justify-between text-xs font-extrabold">
+                <span>JUMLAH POTONGAN</span>
+                <span id="ps-total-deductions">RM 0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gaji Bersih & Caruman Majikan -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Caruman Majikan (Employer Statutory Contributions) -->
+            <div class="border border-slate-300 rounded-xl p-3.5 bg-slate-50 space-y-1.5 text-xs">
+              <div class="font-bold text-slate-800 uppercase text-[11px] border-b border-slate-200 pb-1 mb-1.5">
+                Caruman Berkanun Majikan (Employer Contribution)
+              </div>
+              <div id="ps-employer-contrib" class="space-y-1"></div>
+            </div>
+
+            <!-- Net Pay Box -->
+            <div class="border-2 border-emerald-700 bg-emerald-50/70 rounded-xl p-4 flex flex-col justify-center">
+              <div class="text-xs font-bold uppercase text-emerald-800">Gaji Bersih Diterima (Net Pay)</div>
+              <div id="ps-net-pay" class="text-2xl sm:text-3xl font-black text-emerald-900 mt-1">RM 0.00</div>
+              <div id="ps-bank-info" class="text-[11px] text-slate-700 mt-1.5 font-medium"></div>
+            </div>
+          </div>
+
+          <!-- Baki Cuti Tahunan (AL) & Cuti Sakit (MC) mengikut Kontrak -->
+          <div class="border border-slate-300 rounded-xl p-3 text-xs bg-white">
+            <div class="font-bold text-slate-800 uppercase text-[11px] mb-2">Rekod Kelayakan & Baki Cuti Tahunan (Polisi Kontrak SCK & Akta Kerja 1955)</div>
+            <div id="ps-leave-summary" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center"></div>
+          </div>
+
+          <!-- Footer Nota Cetakan Komputer -->
+          <div class="pt-3 border-t border-slate-300 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <span class="font-bold text-slate-700 uppercase">Cetakan Komputer — Tandatangan Tidak Diperlukan</span>
+            <span>Dijana oleh Sistem Payroll SCK Wooden Industries Sdn Bhd • Pematuhan Akta Kerja 1955</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 4: LAPORAN BERKANUN (EPF, SOCSO 24 JAM, EIS, PCB, HRDF)           -->
+    <!-- ===================================================================== -->
+    <section id="tab-statutory" class="tab-content hidden space-y-6">
+      <!-- Summary Totals for Statutory Bodies -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-bold text-slate-500 dark:text-slate-400">KWSP (EPF)</div>
+          <div id="stat-epf-total" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">RM 0.00</div>
+          <div id="stat-epf-split" class="text-[11px] text-slate-500 mt-1">Pekerja: RM 0 | Majikan: RM 0</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-bold text-blue-600 dark:text-blue-400">PERKESO (SOCSO 24 Jam)</div>
+          <div id="stat-socso-total" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">RM 0.00</div>
+          <div id="stat-socso-split" class="text-[11px] text-slate-500 mt-1">Pekerja: RM 0 | Majikan: RM 0</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400">SIP (EIS - Akta 800)</div>
+          <div id="stat-eis-total" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">RM 0.00</div>
+          <div id="stat-eis-split" class="text-[11px] text-slate-500 mt-1">Pekerja: RM 0 | Majikan: RM 0</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-bold text-rose-600 dark:text-rose-400">PCB (LHDN MTD)</div>
+          <div id="stat-pcb-total" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">RM 0.00</div>
+          <div class="text-[11px] text-slate-500 mt-1">Potongan Cukai Bulanan</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400">HRDF (HRD Corp 1%)</div>
+          <div id="stat-hrdf-total" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">RM 0.00</div>
+          <div class="text-[11px] text-slate-500 mt-1">100% Caruman Majikan</div>
+        </div>
+      </div>
+
+      <!-- Official Statutory Matrix Reference -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Jadual Rujukan Pematuhan Potongan & Caruman Berkanun Malaysia (Aktif dalam Enjin Pengiraan)</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Setiap item pendapatan dikira secara automatik mengikut jadual rasmi di bawah.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 dark:bg-slate-800 font-bold uppercase text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-2.5 px-4">Jenis Imbuhan / Pendapatan</th>
+                <th class="py-2.5 px-4 text-center">EPF (KWSP)</th>
+                <th class="py-2.5 px-4 text-center">SOCSO (24J)</th>
+                <th class="py-2.5 px-4 text-center">EIS (SIP)</th>
+                <th class="py-2.5 px-4 text-center">PCB (LHDN)</th>
+                <th class="py-2.5 px-4 text-center">HRDF</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Gaji Pokok / Upah Harian (Salary/Wages)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Kerja Lebih Masa (Overtime - 1.5x / 2.0x / 3.0x)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Elaun Tetap (Allowance - Kedatangan/Makan/Syif)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Komisen / Insentif / Ganjaran (Commission/Incentive)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Bonus Tahunan / Prestasi (Bonus)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Gantian Cuti Tahunan / Sakit Tidak Digunakan (Unutilized AL/MC)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 font-semibold">Angpaw / Saguhati / Manfaat Persaraan (Angpaw/Gratuity)</td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">YA</span></td>
+                <td class="py-2.5 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 font-bold">TIDAK</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Detailed Employee Statutory Breakdown Table -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+          <h3 id="statutory-table-title" class="text-sm font-bold text-slate-900 dark:text-white">Senarai Caruman Berkanun Individu (67 Pekerja Aktif)</h3>
+          <button onclick="exportStatutoryCSV()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Eksport Borang A (KWSP) & PERKESO CSV</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto max-h-[55vh]">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="sticky top-0 bg-slate-100 dark:bg-slate-800 font-bold uppercase text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th class="py-2.5 px-3">Pekerja</th>
+                <th class="py-2.5 px-3">No. IC / Pasport</th>
+                <th class="py-2.5 px-3 text-right">Subjek EPF</th>
+                <th class="py-2.5 px-3 text-right">EPF Pekerja</th>
+                <th class="py-2.5 px-3 text-right">EPF Majikan</th>
+                <th class="py-2.5 px-3 text-right">SOCSO 24J (P/M)</th>
+                <th class="py-2.5 px-3 text-right">EIS (P/M)</th>
+                <th class="py-2.5 px-3 text-right">PCB (LHDN)</th>
+                <th class="py-2.5 px-3 text-right">HRDF (1%)</th>
+              </tr>
+            </thead>
+            <tbody id="statutory-table-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 5: TETAPAN POLISI & AKTA (BOLEH EDIT)                             -->
+    <!-- ===================================================================== -->
+    <section id="tab-settings" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Tetapan Parameter Akta Kerja 1955 & Polisi SCK Wooden</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Sebarang perubahan kadar akan mengira semula gaji semua pekerja aktif secara automatik.</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="resetDefaultSettings()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">
+              Set Semula Lalai (2025/2026)
+            </button>
+            <button onclick="saveSettingsFromForm()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+              Simpan & Kira Semula Semua
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Column 1: Akta Kerja & Kadar OT -->
+          <div class="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">1. Gaji Minimum & Kadar OT</h3>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Gaji Minimum Bulanan (RM)</label>
+              <input type="number" step="0.01" id="set-min-wage" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              <p class="text-[11px] text-slate-500 mt-1">Piawaian terkini Malaysia: RM 1,700.00 (Bersamaan RM 65.38/hari bagi 26 hari).</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold mb-1">Pembahagi Hari (ORP)</label>
+                <input type="number" id="set-orp-days" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">Jam Kerja Sehari (HRP)</label>
+                <input type="number" id="set-hrp-hours" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-xs font-semibold mb-1">OT Biasa</label>
+                <input type="number" step="0.1" id="set-ot-normal" class="w-full px-2.5 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">OT Ahad</label>
+                <input type="number" step="0.1" id="set-ot-rest" class="w-full px-2.5 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">OT Cuti Am</label>
+                <input type="number" step="0.1" id="set-ot-ph" class="w-full px-2.5 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Caruman Berkanun EPF, SOCSO 24J, EIS, HRDF -->
+          <div class="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">2. Kadar KWSP, PERKESO 24J & HRDF</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold mb-1">KWSP Pekerja (%)</label>
+                <input type="number" step="0.5" id="set-epf-emp" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">KWSP Majikan ≤5k (%)</label>
+                <input type="number" step="0.5" id="set-epf-empr-low" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold mb-1">KWSP Majikan &gt;5k (%)</label>
+                <input type="number" step="0.5" id="set-epf-empr-high" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">KWSP Warga Asing (%)</label>
+                <input type="number" step="0.5" id="set-epf-foreign" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold mb-1">Siling SOCSO/EIS (RM)</label>
+                <input type="number" step="100" id="set-socso-ceiling" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">Levy HRDF Majikan (%)</label>
+                <input type="number" step="0.1" id="set-hrdf-rate" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
+              </div>
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <input type="checkbox" id="set-socso-24h" checked class="w-4 h-4 rounded text-emerald-600" />
+              <label for="set-socso-24h" class="text-xs font-medium">Aktifkan Perlindungan PERKESO 24 Jam (Skim Lindung 24/7)</label>
+            </div>
+          </div>
+
+          <!-- Column 3: Polisi Cuti Tahunan & Sakit Kontrak SCK -->
+          <div class="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">3. Polisi Cuti Kontrak SCK Wooden</h3>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Mod Kelayakan Cuti Tahunan (AL)</label>
+              <select id="set-al-policy" class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
+                <option value="CONTRACT">Kontrak SCK (&lt;1thn: 0 hari | 1-2: 8 | 2-5: 12 | ≥5: 16)</option>
+                <option value="ACT1955">Akta Kerja 1955 (&lt;2thn: 8 hari | 2-5: 12 | ≥5: 16)</option>
+              </select>
+            </div>
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
+              <div class="font-bold text-slate-800 dark:text-slate-200">Klausa Cuti Sakit & Kecemasan (Kontrak):</div>
+              <p class="text-slate-600 dark:text-slate-400">• <strong>MC Biasa:</strong> 14 hari (&lt;2 thn), 18 hari (2-5 thn), 22 hari (≥5 thn).</p>
+              <p class="text-slate-600 dark:text-slate-400">• <strong>MC Hospitalisasi:</strong> Sehingga 60 hari setahun keseluruhan.</p>
+              <p class="text-slate-600 dark:text-slate-400">• <strong>Cuti Kecemasan (EL):</strong> Maksimum 2 hari/tahun (ditolak daripada baki AL).</p>
+              <p class="text-slate-600 dark:text-slate-400">• <strong>Notis Berhenti:</strong> 8 minggu notis bertulis atau gaji ganti notis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL EDIT / TAMBAH PEKERJA (INDIVIDU)                                -->
+  <!-- ===================================================================== -->
+  <div id="employee-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto no-print">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
+        <div>
+          <h3 id="modal-title" class="text-base font-extrabold text-slate-900 dark:text-white">Edit Maklumat & Gaji Pekerja</h3>
+          <p id="modal-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Kemas kini profil, gaji pokok, hari bekerja, OT, elaun, potongan & cuti</p>
+        </div>
+        <button onclick="closeEmployeeModal()" class="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <form id="employee-form" onsubmit="saveEmployeeForm(event)" class="p-5 overflow-y-auto space-y-5 text-xs">
+        <input type="hidden" id="edit-emp-id" />
+
+        <!-- Section A: Profil & Kontrak -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 border-b border-slate-200 dark:border-slate-800 pb-1">A. Maklumat Peribadi, Kategori & Bahagian Kerja</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">ID Pekerja *</label>
+              <input type="text" id="edit-emp-code" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-semibold mb-1">Nama Penuh (Seperti KP / Pasport) *</label>
+              <input type="text" id="edit-emp-name" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Kategori Pekerja *</label>
+              <select id="edit-emp-category" onchange="onModalCategoryChange()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-semibold">
+                <option value="GENERAL WORKERS (INDONESIAN)">GENERAL WORKERS (INDONESIAN)</option>
+                <option value="GENERAL WORKERS (MYANMAR)">GENERAL WORKERS (MYANMAR)</option>
+                <option value="GENERAL WORKERS (NEPAL)">GENERAL WORKERS (NEPAL)</option>
+                <option value="GENERAL WORKERS (LOCAL)">GENERAL WORKERS (LOCAL)</option>
+                <option value="STAFF">STAFF</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">No. Kad Pengenalan / Pasport *</label>
+              <input type="text" id="edit-emp-ic" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Bahagian Kerja / Jawatan *</label>
+              <input type="text" id="edit-emp-position" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Warganegara</label>
+              <input type="text" id="edit-emp-nationality" required placeholder="Malaysia / Indonesia / Myanmar / Nepal" onchange="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Tarikh Lahir (DOB)</label>
+              <input type="date" id="edit-emp-dob" onchange="autoCalcAgeFromDob()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Umur (Tahun)</label>
+              <input type="number" id="edit-emp-age" min="18" max="80" value="30" onchange="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Tarikh Mula Kerja *</label>
+              <input type="date" id="edit-emp-join" required onchange="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">No. Telefon (WhatsApp Slip)</label>
+              <input type="text" id="edit-emp-phone" placeholder="0178649317" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Catatan (Cth: TIMBERLUX)</label>
+              <input type="text" id="edit-emp-note" placeholder="TIMBERLUX / dll" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-semibold mb-1">Alamat Kediaman</label>
+              <input type="text" id="edit-emp-address" placeholder="Alamat lengkap pekerja" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Nama Bank & No. Akaun Gaji</label>
+              <input type="text" id="edit-emp-bank" placeholder="Maybank - 156012345678" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section B: Struktur Gaji (Bulanan vs Harian) & Kehadiran -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400 border-b border-slate-200 dark:border-slate-800 pb-1">B. Gaji Pokok / Kadar Harian & Kehadiran Bulan Ini</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Jenis Gaji</label>
+              <select id="edit-emp-paytype" onchange="togglePayTypeLabels(); recalcModalPreview();" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-semibold">
+                <option value="DAILY">Gaji Harian (Daily Rated)</option>
+                <option value="MONTHLY">Gaji Bulanan (Monthly)</option>
+              </select>
+            </div>
+            <div>
+              <label id="lbl-basic-rate" class="block font-semibold mb-1">Kadar Upah Sehari (RM/Hari) *</label>
+              <input type="number" step="0.01" id="edit-emp-basic" required oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Hari Bekerja (Gaji Harian)</label>
+              <input type="number" step="0.5" min="0" max="31" id="edit-emp-days-worked" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Cuti Tanpa Gaji / UPL (Hari)</label>
+              <input type="number" step="0.5" min="0" max="31" id="edit-emp-upl" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section C: Kerja Lebih Masa (OT) & Elaun / Bonus -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400 border-b border-slate-200 dark:border-slate-800 pb-1">C. Kerja Lebih Masa (OT) & Imbuhan Tambahan</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Jam OT Biasa (1.5x)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-ot15" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Jam OT Hari Rehat (2.0x)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-ot20" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Jam OT Cuti Umum (3.0x)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-ot30" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Elaun Tetap (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-allowance" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Komisen / Insentif (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-commission" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Bonus (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-bonus" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Gantian AL Tidak Guna (Hari)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-encash-al" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Angpaw / Saguhati (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-angpaw" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section D: Cuti (AL/MC/EL) & Potongan Khas -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400 border-b border-slate-200 dark:border-slate-800 pb-1">D. Rekod Cuti Tahunan (AL) / Sakit (MC) & Potongan Lain</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block font-semibold mb-1">Kelayakan AL 2026 (Hari)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-al-entitled" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">AL Diambil Tahun Ini (Hari)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-al-taken" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">EL Diambil (Tolak AL)</label>
+              <input type="number" step="0.5" min="0" max="2" id="edit-emp-el-taken" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">MC Diambil Tahun Ini (Hari)</label>
+              <input type="number" step="0.5" min="0" id="edit-emp-mc-taken" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Status Cukai (PCB LHDN)</label>
+              <select id="edit-emp-tax-status" onchange="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+                <option value="SINGLE">Bujang (Kategori 1)</option>
+                <option value="MARRIED_NW">Berkahwin - Pasangan Tidak Bekerja</option>
+                <option value="MARRIED_W">Berkahwin - Pasangan Bekerja</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Potongan Pinjaman / Advance (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-advance" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Potongan Asrama / Lain (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-other-ded" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block font-semibold mb-1">Override PCB Manual (RM)</label>
+              <input type="number" step="0.01" min="0" id="edit-emp-pcb-manual" placeholder="Kosong = Auto LHDN" oninput="recalcModalPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div class="flex items-center pt-2 sm:col-span-2">
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="edit-emp-epf-11" checked onchange="recalcModalPreview()" class="w-4 h-4 rounded text-emerald-600" />
+                <span class="font-semibold">Caruman KWSP Penuh (11% Pekerja Tempatan)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Calculation Summary Box inside Modal -->
+        <div id="modal-live-summary" class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div>
+            <div class="text-[10px] uppercase font-bold text-slate-500">Kadar Sejam (HRP)</div>
+            <div id="prev-hrp" class="text-sm font-extrabold text-slate-800 dark:text-slate-100">RM 0.00</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-slate-500">Jumlah OT</div>
+            <div id="prev-ot" class="text-sm font-extrabold text-amber-600">RM 0.00</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-slate-500">Gaji Kasar</div>
+            <div id="prev-gross" class="text-sm font-extrabold text-slate-900 dark:text-white">RM 0.00</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-slate-500">Potongan Berkanun</div>
+            <div id="prev-ded" class="text-sm font-extrabold text-rose-600">RM 0.00</div>
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400">Gaji Bersih</div>
+            <div id="prev-net" class="text-base font-black text-emerald-700 dark:text-emerald-300">RM 0.00</div>
+          </div>
+        </div>
+
+        <!-- Modal Footer Buttons -->
+        <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+          <button type="button" id="btn-delete-emp" onclick="deleteCurrentEmployee()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 transition">
+            Padam Pekerja
+          </button>
+          <div class="flex gap-2">
+            <button type="button" onclick="closeEmployeeModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">
+              Batal
+            </button>
+            <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+              Simpan Perubahan
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FIREBASE SDK v13.4.0 & APPLICATION LOGIC                              -->
+  <!-- ===================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-analytics.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+    // Konfigurasi Firebase SCK Wooden Industries Sdn Bhd
+    const firebaseConfig = {
+      apiKey: "AIzaSyCisyNx5OS8le5DR8N1k-1C23LATUc5k6w",
+      authDomain: "sistem-gaji-e771e.firebaseapp.com",
+      projectId: "sistem-gaji-e771e",
+      storageBucket: "sistem-gaji-e771e.firebasestorage.app",
+      messagingSenderId: "585063684314",
+      appId: "1:585063684314:web:df5aa8ddfc9f90524bede3",
+      measurementId: "G-541MV324P5"
+    };
+
+    let app, auth, db, analytics;
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      try {
+        analytics = getAnalytics(app);
+      } catch (e) {
+        // Abaikan jika analytics disekat oleh pelayar
+      }
+    } catch (err) {
+      console.warn("Firebase init fallback ke Mod Tetamu:", err);
+    }
+
+    window.currentUser = null;
+
+    // Log Masuk Google menggunakan signInWithPopup SAHAJA
+    window.handleGoogleLogin = async function () {
+      if (!auth) {
+        window.showToast("Perkhidmatan Firebase tidak tersedia. Menggunakan Mod Tetamu.", "warning");
+        return;
+      }
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+        const result = await signInWithPopup(auth, provider);
+        window.currentUser = result.user;
+        window.showToast(`Selamat datang, ${result.user.displayName || result.user.email}! Menyegerakkan data...`, "success");
+        await window.loadCloudPayrollData();
+      } catch (error) {
+        console.error("Ralat signInWithPopup:", error);
+        window.showToast(`Log masuk dibatalkan atau disekat (${error.code || "Popup"}). Mod Tetamu kekal aktif.`, "warning");
+      }
+    };
+
+    window.handleGoogleLogout = async function () {
+      if (!auth) return;
+      try {
+        await signOut(auth);
+        window.currentUser = null;
+        window.showToast("Anda telah log keluar. Kembali ke Mod Tetamu (Simpanan Lokal).", "info");
+      } catch (error) {
+        console.error("Ralat log keluar:", error);
+      }
+    };
+
+    // Simpan ke Firestore apabila pengguna log masuk
+    window.syncToCloud = async function () {
+      if (!window.currentUser || !db) return;
+      try {
+        const periodKey = `${document.getElementById("payroll-year").value}-${document.getElementById("payroll-month").value}`;
+        const docRef = doc(db, "users", window.currentUser.uid, "payroll_data", periodKey);
+        await setDoc(docRef, {
+          employees: window.employees,
+          settings: window.settings,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (err) {
+        console.warn("Gagal menyegerak ke Firestore (sandaran lokal disimpan):", err);
+      }
+    };
+
+    // Muat data dari Firestore apabila pengguna log masuk
+    window.loadCloudPayrollData = async function () {
+      if (!window.currentUser || !db) return;
+      try {
+        const periodKey = `${document.getElementById("payroll-year").value}-${document.getElementById("payroll-month").value}`;
+        const docRef = doc(db, "users", window.currentUser.uid, "payroll_data", periodKey);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          if (Array.isArray(data.employees) && data.employees.length > 0) {
+            window.employees = data.employees;
+          }
+          if (data.settings) {
+            window.settings = { ...window.DEFAULT_SETTINGS, ...data.settings };
+          }
+          window.saveLocalState(false);
+          window.refreshAllUI();
+          window.showToast("Data gaji dari awan (Firebase) berjaya dimuatkan.", "success");
+        } else {
+          await window.syncToCloud();
+        }
+      } catch (err) {
+        console.warn("Ralat memuat data awan:", err);
+      }
+    };
+
+    if (auth) {
+      onAuthStateChanged(auth, (user) => {
+        window.currentUser = user;
+        const badge = document.getElementById("sync-badge");
+        const btnLogin = document.getElementById("btn-google-login");
+        const btnLogout = document.getElementById("btn-google-logout");
+        if (user) {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Awan: ${user.displayName ? user.displayName.split(" ")[0] : "Aktif"}`;
+          badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800";
+          btnLogin.classList.add("hidden");
+          btnLogout.classList.remove("hidden");
+        } else {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Mod Tetamu (Lokal)`;
+          badge.className = "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800";
+          btnLogin.classList.remove("hidden");
+          btnLogout.classList.add("hidden");
+        }
+      });
+    }
+  </script>
+
+  <!-- ===================================================================== -->
+  <!-- CORE PAYROLL ENGINE & SENARAI PEKERJA 2026 (67 PEKERJA AKTIF)         -->
+  <!-- ===================================================================== -->
+  <script>
+    // Tetapan Lalai Pematuhan Akta Kerja 1955 & Polisi SCK Wooden (2025/2026)
+    window.DEFAULT_SETTINGS = {
+      minWage: 1700.00,        // Perintah Gaji Minimum RM 1,700.00 (RM 65.38/hari x 26 hari)
+      orpDays: 26,             // Pembahagi kadar harian biasa Akta Kerja 1955
+      hrpHours: 8,             // Jam kerja biasa sehari (Kontrak SCK)
+      otNormal: 1.5,           // Klausa 6 Kontrak: Hari Biasa 1.5x
+      otRest: 2.0,             // Klausa 6 Kontrak: Rehat Mingguan (Ahad) 2.0x
+      otPublic: 3.0,           // Klausa 6 Kontrak: Hari Kelepasan Am 3.0x
+      epfEmployeeRate: 11.0,   // KWSP Pekerja Tempatan (<60 thn)
+      epfEmployerLow: 13.0,    // KWSP Majikan gaji <= RM5,000
+      epfEmployerHigh: 12.0,   // KWSP Majikan gaji > RM5,000
+      epfForeignRate: 2.0,     // KWSP Warga Asing Terkini (2% Pekerja, 2% Majikan)
+      socsoCeiling: 6000.00,   // Siling gaji diinsuranskan PERKESO & EIS (RM 6,000)
+      socso24HourActive: true, // Skim Perlindungan 24 Jam (Lindung 24/7)
+      hrdfRate: 1.0,           // Levy HRD Corp Majikan 1.0%
+      alPolicy: "CONTRACT"     // Kontrak SCK (<1thn: 0 | 1-2: 8 | 2-5: 12 | >=5: 16)
+    };
+
+    window.settings = { ...window.DEFAULT_SETTINGS };
+    window.employees = [];
+
+    // Utiliti Format Mata Wang RM
+    function formatRM(val) {
+      const num = Number(val) || 0;
+      return "RM " + num.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Utiliti Format Nombor Telefon Malaysia ke WhatsApp (601...)
+    function formatWhatsAppPhone(rawPhone) {
+      const digits = String(rawPhone || "").replace(/\D/g, "");
+      if (!digits) return "";
+      if (digits.startsWith("60")) return digits;
+      if (digits.startsWith("0")) return "6" + digits;
+      return "60" + digits;
+    }
+
+    // Semak sama ada pekerja warganegara Malaysia atau warga asing
+    function isLocalCitizen(emp) {
+      const nat = String(emp.nationality || "").trim().toLowerCase();
+      return nat === "malaysia" || nat === "local";
+    }
+
+    // Utiliti Toast Notification (Menggantikan alert)
+    window.showToast = function (message, type = "info") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      const colors = {
+        success: "bg-emerald-700 text-white border-emerald-500",
+        warning: "bg-amber-600 text-white border-amber-400",
+        error: "bg-rose-700 text-white border-rose-500",
+        info: "bg-slate-800 text-white border-slate-600"
+      };
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold flex items-center justify-between gap-3 transition-all duration-300 ${colors[type] || colors.info}`;
+      toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" class="opacity-75 hover:opacity-100 font-bold">✕</button>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 4200);
+    };
+
+    // Kira Tempoh Perkhidmatan (Tahun) dari tarikh mula kerja
+    function getYearsOfService(joinDateStr) {
+      if (!joinDateStr) return 1;
+      const join = new Date(joinDateStr);
+      const refYear = parseInt(document.getElementById("payroll-year")?.value || "2026", 10);
+      const refMonth = parseInt(document.getElementById("payroll-month")?.value || "11", 10);
+      const refDate = new Date(refYear, refMonth - 1, 28);
+      const diffMs = refDate - join;
+      const years = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+      return Math.max(0, years);
+    }
+
+    // Kira Kelayakan Cuti Tahunan (AL) & Cuti Sakit (MC) mengikut Rekod 2026 & Kontrak SCK Wooden
+    function calculateLeaveEntitlement(emp) {
+      const years = getYearsOfService(emp.joinDate);
+      let alEntitled = 0;
+
+      if (emp.alEntitledOverride !== undefined && emp.alEntitledOverride !== null && emp.alEntitledOverride !== "") {
+        alEntitled = Number(emp.alEntitledOverride);
+      } else if (window.settings.alPolicy === "CONTRACT") {
+        // Klausa 9 Kontrak SCK Wooden Industries Sdn Bhd
+        if (years < 1) alEntitled = 0;
+        else if (years < 2) alEntitled = 8;
+        else if (years < 5) alEntitled = 12;
+        else alEntitled = 16;
+      } else {
+        // Akta Kerja 1955 Standard
+        if (years < 2) alEntitled = 8;
+        else if (years < 5) alEntitled = 12;
+        else alEntitled = 16;
+      }
+
+      // Klausa 10 Kontrak SCK: MC Biasa & Hospitalisasi (60 hari keseluruhan)
+      let mcEntitled = 14;
+      let hospEntitled = 46;
+      if (years >= 5) {
+        mcEntitled = 22;
+        hospEntitled = 38;
+      } else if (years >= 2) {
+        mcEntitled = 18;
+        hospEntitled = 42;
+      }
+
+      const alUsed = (Number(emp.alTaken) || 0) + (Number(emp.elTaken) || 0) + (Number(emp.encashAlDays) || 0);
+      const alBalance = alEntitled - alUsed;
+      const mcUsed = Number(emp.mcTaken) || 0;
+      const mcBalance = mcEntitled - mcUsed;
+
+      return {
+        years: years.toFixed(1),
+        alEntitled,
+        alUsed,
+        alBalance,
+        mcEntitled,
+        hospEntitled,
+        mcUsed,
+        mcBalance
+      };
+    }
+
+    // Jadual Caruman PERKESO (SOCSO Akta 4 - Termasuk Perlindungan 24 Jam / Lindung 24/7) & EIS (Akta 800)
+    function calculateSocsoAndEis(subjectWage, emp) {
+      const ceiling = Number(window.settings.socsoCeiling) || 6000;
+      const cappedWage = Math.min(Math.max(0, subjectWage), ceiling);
+      const isSenior = (Number(emp.age) || 30) >= 60;
+      const isForeign = !isLocalCitizen(emp);
+
+      if (cappedWage <= 0) {
+        return { socsoEmp: 0, socsoEmpr: 0, eisEmp: 0, eisEmpr: 0 };
+      }
+
+      let midpoint = 0;
+      if (cappedWage <= 30) midpoint = 25;
+      else if (cappedWage <= 50) midpoint = 40;
+      else if (cappedWage <= 70) midpoint = 60;
+      else if (cappedWage <= 100) midpoint = 85;
+      else if (cappedWage <= 140) midpoint = 120;
+      else if (cappedWage <= 200) midpoint = 170;
+      else {
+        const bracketIndex = Math.ceil((cappedWage - 200) / 100);
+        midpoint = 200 + (bracketIndex * 100) - 50;
+        if (midpoint > ceiling - 50) midpoint = ceiling - 50;
+      }
+
+      let socsoEmp = 0;
+      let socsoEmpr = 0;
+
+      if (isSenior) {
+        // Kategori 2: Bencana Pekerjaan Sahaja (≥60 Tahun) - Majikan 1.25%, Pekerja 0%
+        socsoEmp = 0;
+        socsoEmpr = Math.round(midpoint * 0.0125 * 20) / 20;
+      } else {
+        // Kategori 1: Bencana Pekerjaan & Keilatan (Termasuk Skim Lindung 24 Jam)
+        socsoEmp = Math.round(midpoint * 0.005 * 20) / 20;
+        socsoEmpr = Math.round(midpoint * 0.0175 * 20) / 20;
+      }
+
+      // EIS (SIP - Akta 800): 0.2% Pekerja, 0.2% Majikan (Dikecualikan jika ≥60 thn atau Warga Asing)
+      let eisEmp = 0;
+      let eisEmpr = 0;
+      if (!isSenior && !isForeign) {
+        eisEmp = Math.round(midpoint * 0.002 * 20) / 20;
+        eisEmpr = Math.round(midpoint * 0.002 * 20) / 20;
+      }
+
+      return {
+        socsoEmp: Number(socsoEmp.toFixed(2)),
+        socsoEmpr: Number(socsoEmpr.toFixed(2)),
+        eisEmp: Number(eisEmp.toFixed(2)),
+        eisEmpr: Number(eisEmpr.toFixed(2))
+      };
+    }
+
+    // Anggaran Pengiraan PCB (Potongan Cukai Berjadual LHDN Malaysia)
+    function calculateMonthlyPCB(annualChargeableTaxableMonthly, epfEmployeeMonthly, emp) {
+      if (emp.pcbManual !== "" && emp.pcbManual !== null && emp.pcbManual !== undefined && !isNaN(Number(emp.pcbManual))) {
+        return Math.max(0, Number(emp.pcbManual));
+      }
+
+      const annualGross = annualChargeableTaxableMonthly * 12;
+      const epfRelief = Math.min(4000, epfEmployeeMonthly * 12);
+      let spouseRelief = 0;
+      if (emp.taxStatus === "MARRIED_NW") spouseRelief = 4000;
+
+      const chargeableIncome = annualGross - 9000 - epfRelief - spouseRelief;
+      if (chargeableIncome <= 5000) return 0;
+
+      let annualTax = 0;
+      if (chargeableIncome <= 20000) {
+        annualTax = (chargeableIncome - 5000) * 0.01;
+      } else if (chargeableIncome <= 35000) {
+        annualTax = 150 + (chargeableIncome - 20000) * 0.03;
+      } else if (chargeableIncome <= 50000) {
+        annualTax = 600 + (chargeableIncome - 35000) * 0.06;
+      } else if (chargeableIncome <= 70000) {
+        annualTax = 1500 + (chargeableIncome - 50000) * 0.11;
+      } else if (chargeableIncome <= 100000) {
+        annualTax = 3700 + (chargeableIncome - 70000) * 0.19;
+      } else {
+        annualTax = 9400 + (chargeableIncome - 100000) * 0.25;
+      }
+
+      if (chargeableIncome <= 35000) {
+        annualTax = Math.max(0, annualTax - 400);
+      }
+
+      return Number((annualTax / 12).toFixed(2));
+    }
+
+    // ENJIN PENGIRAAN PAYROLL UTAMA BAGI SETIAP PEKERJA
+    function calculateEmployeePayroll(emp) {
+      const s = window.settings;
+      const basicInput = Number(emp.basicSalary) || 0;
+      const daysWorked = Number(emp.daysWorked) || 26;
+      const uplDays = Number(emp.uplDays) || 0;
+
+      // 1. Kadar Harian Biasa (ORP) & Kadar Sejam (HRP) mengikut Akta Kerja 1955
+      let orp = 0;
+      let earnedBasic = 0;
+      let uplDeduction = 0;
+
+      if (emp.payType === "DAILY") {
+        // Gaji Harian: General Workers (RM 65.38/hari x 26 hari = RM 1,699.88 / RM 1,700.00)
+        orp = basicInput;
+        earnedBasic = Number((orp * daysWorked).toFixed(2));
+        uplDeduction = Number((orp * uplDays).toFixed(2));
+      } else {
+        // Gaji Bulanan: Staff
+        orp = basicInput / (Number(s.orpDays) || 26);
+        earnedBasic = basicInput;
+        uplDeduction = Number((orp * uplDays).toFixed(2));
+      }
+
+      const hrp = orp / (Number(s.hrpHours) || 8);
+
+      // 2. Kiraan Kerja Lebih Masa (OT) mengikut Klausa 6 Kontrak SCK & Akta Kerja 1955
+      const ot15Hours = Number(emp.ot15Hours) || 0;
+      const ot20Hours = Number(emp.ot20Hours) || 0;
+      const ot30Hours = Number(emp.ot30Hours) || 0;
+
+      const ot15Pay = Number((hrp * (Number(s.otNormal) || 1.5) * ot15Hours).toFixed(2));
+      const ot20Pay = Number((hrp * (Number(s.otRest) || 2.0) * ot20Hours).toFixed(2));
+      const ot30Pay = Number((hrp * (Number(s.otPublic) || 3.0) * ot30Hours).toFixed(2));
+      const totalOTPay = Number((ot15Pay + ot20Pay + ot30Pay).toFixed(2));
+
+      // 3. Komponen Imbuhan Lain (Mengikut Jadual Rasmi Potongan & Caruman Berkanun)
+      const allowance = Number(emp.allowance) || 0;       // EPF: Y, SOCSO: Y, EIS: Y, PCB: Y, HRDF: Y
+      const commission = Number(emp.commission) || 0;     // EPF: Y, SOCSO: Y, EIS: Y, PCB: Y, HRDF: N
+      const bonus = Number(emp.bonus) || 0;               // EPF: Y, SOCSO: N, EIS: N, PCB: Y, HRDF: N
+      const encashAlDays = Number(emp.encashAlDays) || 0;
+      const encashAlPay = Number((orp * encashAlDays).toFixed(2)); // EPF: Y, SOCSO: Y, EIS: Y, PCB: Y, HRDF: Y
+      const angpaw = Number(emp.angpaw) || 0;             // EPF: N, SOCSO: N, EIS: N, PCB: Y, HRDF: N
+
+      // Jumlah Gaji Kasar (Gross Pay)
+      const netEarnedBasic = Math.max(0, Number((earnedBasic - uplDeduction).toFixed(2)));
+      const grossPay = Number((netEarnedBasic + totalOTPay + allowance + commission + bonus + encashAlPay + angpaw).toFixed(2));
+
+      // 4. Pengiraan Subjek Berkanun berdasarkan Jadual Rasmi
+      const epfSubject = netEarnedBasic + allowance + commission + bonus + encashAlPay;
+      const socsoEisSubject = netEarnedBasic + totalOTPay + allowance + commission + encashAlPay;
+      const hrdfSubject = netEarnedBasic + allowance + encashAlPay;
+      const pcbSubject = grossPay;
+
+      // 5. Pengiraan Caruman KWSP (EPF)
+      let epfEmp = 0;
+      let epfEmpr = 0;
+      const isForeign = !isLocalCitizen(emp);
+      const isSenior = (Number(emp.age) || 30) >= 60;
+
+      if (epfSubject > 0) {
+        if (isForeign) {
+          // Kadar KWSP Warga Asing Terkini (2% Pekerja, 2% Majikan)
+          const fRate = (Number(s.epfForeignRate) || 2.0) / 100;
+          epfEmp = Math.ceil(epfSubject * fRate);
+          epfEmpr = Math.ceil(epfSubject * fRate);
+        } else if (isSenior) {
+          // Warga Emas >= 60 thn (0% Pekerja pilihan, 4% Majikan)
+          epfEmp = emp.epfFull ? Math.ceil(epfSubject * 0.055) : 0;
+          epfEmpr = Math.ceil(epfSubject * 0.04);
+        } else {
+          // Pekerja Tempatan (<60 thn)
+          const empRate = emp.epfFull ? (Number(s.epfEmployeeRate) || 11.0) / 100 : 0.09;
+          const emprRate = epfSubject <= 5000
+            ? (Number(s.epfEmployerLow) || 13.0) / 100
+            : (Number(s.epfEmployerHigh) || 12.0) / 100;
+          epfEmp = Math.ceil(epfSubject * empRate);
+          epfEmpr = Math.ceil(epfSubject * emprRate);
+        }
+      }
+
+      // 6. Pengiraan PERKESO (SOCSO 24 Jam) & EIS (SIP)
+      const { socsoEmp, socsoEmpr, eisEmp, eisEmpr } = calculateSocsoAndEis(socsoEisSubject, emp);
+
+      // 7. Pengiraan PCB (LHDN)
+      const pcb = calculateMonthlyPCB(pcbSubject, epfEmp, emp);
+
+      // 8. Pengiraan HRDF (1.0% Caruman Majikan)
+      const hrdfEmpr = Number((hrdfSubject * ((Number(s.hrdfRate) || 1.0) / 100)).toFixed(2));
+
+      // 9. Potongan Dalaman (Pinjaman / Advance / Asrama)
+      const advanceDed = Number(emp.advanceDed) || 0;
+      const otherDed = Number(emp.otherDed) || 0;
+
+      const totalStatutoryEmp = Number((epfEmp + socsoEmp + eisEmp + pcb).toFixed(2));
+      const totalDeductions = Number((totalStatutoryEmp + advanceDed + otherDed).toFixed(2));
+      const netPay = Math.max(0, Number((grossPay - totalDeductions).toFixed(2)));
+      const totalEmployerContrib = Number((epfEmpr + socsoEmpr + eisEmpr + hrdfEmpr).toFixed(2));
+      const totalCompanyCost = Number((grossPay + totalEmployerContrib).toFixed(2));
+
+      // Semakan Pematuhan Gaji Minimum RM 1,700 (RM 65.38 x 26 = RM 1,699.88 dianggap patuh RM 65.38/hari)
+      const minDailyStandard = Number(((Number(s.minWage) || 1700) / (Number(s.orpDays) || 26)).toFixed(2));
+      const isBelowMinWage = emp.payType === "DAILY"
+        ? basicInput < minDailyStandard
+        : basicInput < (Number(s.minWage) || 1700);
+
+      const leaveInfo = calculateLeaveEntitlement(emp);
+
+      return {
+        orp,
+        hrp,
+        earnedBasic,
+        uplDeduction,
+        netEarnedBasic,
+        ot15Pay,
+        ot20Pay,
+        ot30Pay,
+        totalOTPay,
+        allowance,
+        commission,
+        bonus,
+        encashAlPay,
+        angpaw,
+        grossPay,
+        epfSubject,
+        socsoEisSubject,
+        hrdfSubject,
+        epfEmp,
+        epfEmpr,
+        socsoEmp,
+        socsoEmpr,
+        eisEmp,
+        eisEmpr,
+        pcb,
+        hrdfEmpr,
+        advanceDed,
+        otherDed,
+        totalStatutoryEmp,
+        totalDeductions,
+        netPay,
+        totalEmployerContrib,
+        totalCompanyCost,
+        isBelowMinWage,
+        leaveInfo
+      };
+    }
+
+    // ===================================================================== -->
+    // DATA RASMI 67 ORANG PEKERJA AKTIF DARIPADA FAIL "PEKERJA 2026.xlsx"    -->
+    // ===================================================================== -->
+    const MASTER_PEKERJA_2026 = [
+      // GENERAL WORKERS (INDONESIAN) — 4 ORANG (SCK-001 hingga SCK-004)
+      { code: "SCK-001", category: "GENERAL WORKERS (INDONESIAN)", name: "AGUNG SUPRIYANTO", ic: "E7420071", nationality: "Indonesia", age: 44, dob: "1982-09-16", joinDate: "2001-08-13", position: "FORKLIFT DRIVER", phone: "0178649317", address: "NO. 81 ,KAMPUNG CHERATING ,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 16, ot20: 8, allowance: 100 },
+      { code: "SCK-002", category: "GENERAL WORKERS (INDONESIAN)", name: "RAJA RIZAL ASZIMI", ic: "E7420074", nationality: "Indonesia", age: 32, dob: "1994-07-24", joinDate: "2014-01-11", position: "UV", phone: "0179597637", address: "SCK WOODEN INDUSTRIES", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-003", category: "GENERAL WORKERS (INDONESIAN)", name: "SUTILAN", ic: "E7419997", nationality: "Indonesia", age: 50, dob: "1976-08-22", joinDate: "2000-04-13", position: "FORKLIFT DRIVER", phone: "0173958452", address: "A66 JALAN BUKIT PALAS,KAMPUNG BARU CHERATING 26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 14, ot20: 8, allowance: 100 },
+      { code: "SCK-004", category: "GENERAL WORKERS (INDONESIAN)", name: "ZAENUDIN", ic: "C8184489", nationality: "Indonesia", age: 44, dob: "1982-12-31", joinDate: "2017-05-26", position: "FORKLIFT DRIVER", phone: "01127837547", address: "SCK WOODEN INDUSTRIES", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 12, ot20: 0, allowance: 100 },
+
+      // GENERAL WORKERS (MYANMAR) — 22 ORANG (SCK-005 hingga SCK-026)
+      { code: "SCK-005", category: "GENERAL WORKERS (MYANMAR)", name: "HLAING WIN", ic: "MI012599", nationality: "Myanmar", age: 43, dob: "1983-04-16", joinDate: "2019-12-17", position: "GLUE", phone: "01114321090", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 16, ot20: 0, allowance: 50 },
+      { code: "SCK-006", category: "GENERAL WORKERS (MYANMAR)", name: "KHANT SI THU", ic: "MI012600", nationality: "Myanmar", age: 26, dob: "2000-12-01", joinDate: "2019-12-17", position: "SANDING SOLID", phone: "0177518402", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-007", category: "GENERAL WORKERS (MYANMAR)", name: "MYO KYAW TUN", ic: "MI012605", nationality: "Myanmar", age: 37, dob: "1989-08-07", joinDate: "2019-12-17", position: "TNG", phone: "0164548644", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 12, ot20: 8, allowance: 50 },
+      { code: "SCK-008", category: "GENERAL WORKERS (MYANMAR)", name: "SOE MIN TUN", ic: "MI012601", nationality: "Myanmar", age: 43, dob: "1983-08-10", joinDate: "2019-12-17", position: "UV LINE", phone: "0163683153", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 10, ot20: 0, allowance: 50 },
+      { code: "SCK-009", category: "GENERAL WORKERS (MYANMAR)", name: "WIN THAN", ic: "MJ333555", nationality: "Myanmar", age: 44, dob: "1982-12-17", joinDate: "2019-12-17", position: "SANDING 2 LAYER", phone: "0176713928", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 16, ot20: 0, allowance: 50 },
+      { code: "SCK-010", category: "GENERAL WORKERS (MYANMAR)", name: "YE NAING", ic: "MI012602", nationality: "Myanmar", age: 37, dob: "1989-08-04", joinDate: "2019-12-17", position: "TNG", phone: "01123028545", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-011", category: "GENERAL WORKERS (MYANMAR)", name: "WAI ZAW AUNG", ic: "MF702663", nationality: "Myanmar", age: 24, dob: "2002-04-09", joinDate: "2022-07-29", position: "SPLITTING", phone: "01112788531", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 18, ot20: 0, allowance: 50 },
+      { code: "SCK-012", category: "GENERAL WORKERS (MYANMAR)", name: "NAY LIN HTET", ic: "MF696530", nationality: "Myanmar", age: 27, dob: "1999-03-07", joinDate: "2022-07-29", position: "BANDSAW", phone: "0147916044", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 16, ot20: 8, allowance: 50 },
+      { code: "SCK-013", category: "GENERAL WORKERS (MYANMAR)", name: "THEIN OO", ic: "MF772454", nationality: "Myanmar", age: 28, dob: "1998-05-05", joinDate: "2022-07-29", position: "GLUE", phone: "0179629723", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-014", category: "GENERAL WORKERS (MYANMAR)", name: "ZAW KHAING", ic: "MF498464", nationality: "Myanmar", age: 47, dob: "1979-06-12", joinDate: "2022-10-24", position: "UV LINE", phone: "0179797229", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-015", category: "GENERAL WORKERS (MYANMAR)", name: "THAN AUNG", ic: "MG138814", nationality: "Myanmar", age: 34, dob: "1992-05-04", joinDate: "2022-10-24", position: "PACKING", phone: "0179800680", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 10, ot20: 0, allowance: 50 },
+      { code: "SCK-016", category: "GENERAL WORKERS (MYANMAR)", name: "AUNG SOE MOE", ic: "MF721557", nationality: "Myanmar", age: 47, dob: "1979-04-08", joinDate: "2022-10-24", position: "BANDSAW", phone: "017-9765535", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 16, ot20: 0, allowance: 50 },
+      { code: "SCK-017", category: "GENERAL WORKERS (MYANMAR)", name: "MYO ZAW OO", ic: "MG150394", nationality: "Myanmar", age: 37, dob: "1989-07-14", joinDate: "2022-10-24", position: "PACKING", phone: "0179800526", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-018", category: "GENERAL WORKERS (MYANMAR)", name: "ZAW ZAW LAY", ic: "MF965551", nationality: "Myanmar", age: 30, dob: "1996-12-03", joinDate: "2022-10-24", position: "GLUE", phone: "0179825564", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-019", category: "GENERAL WORKERS (MYANMAR)", name: "AUNG NYEIN CHAN", ic: "MF967209", nationality: "Myanmar", age: 26, dob: "2000-05-07", joinDate: "2023-02-14", position: "SANDING", phone: "0174203749", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 8, allowance: 50 },
+      { code: "SCK-020", category: "GENERAL WORKERS (MYANMAR)", name: "AUNG NAING SOE", ic: "MG421413", nationality: "Myanmar", age: 33, dob: "1993-09-11", joinDate: "2023-02-14", position: "TNG", phone: "0104314087", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-021", category: "GENERAL WORKERS (MYANMAR)", name: "SHAN HTUN SAN", ic: "MG563958", nationality: "Myanmar", age: 22, dob: "2004-05-10", joinDate: "2023-02-14", position: "WTTG", phone: "01172647211", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 16, ot20: 0, allowance: 50 },
+      { code: "SCK-022", category: "GENERAL WORKERS (MYANMAR)", name: "MIN MIN SOE", ic: "MG607887", nationality: "Myanmar", age: 41, dob: "1985-07-25", joinDate: "2023-06-28", position: "QC VENEER", phone: "01112887072", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-023", category: "GENERAL WORKERS (MYANMAR)", name: "SOE THU KYAW", ic: "MH160821", nationality: "Myanmar", age: 40, dob: "1986-07-07", joinDate: "2023-11-13", position: "UV LINE", phone: "0147806042", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 10, ot20: 0, allowance: 50 },
+      { code: "SCK-024", category: "GENERAL WORKERS (MYANMAR)", name: "THAN WIN HLAING", ic: "MH773569", nationality: "Myanmar", age: 42, dob: "1984-06-01", joinDate: "2023-11-13", position: "CROSSCUT", phone: "0179455802", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-025", category: "GENERAL WORKERS (MYANMAR)", name: "WIN AUNG KHAING", ic: "MH773570", nationality: "Myanmar", age: 44, dob: "1982-06-20", joinDate: "2023-11-13", position: "WORKSHOP", phone: "01125543570", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 16, ot20: 8, allowance: 80 },
+      { code: "SCK-026", category: "GENERAL WORKERS (MYANMAR)", name: "KO KO NAING", ic: "MG220323", nationality: "Myanmar", age: 22, dob: "2004-03-02", joinDate: "2023-11-13", position: "SPLITTING", phone: "0174321702", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 0, allowance: 50 },
+
+      // GENERAL WORKERS (NEPAL) — 9 ORANG (SCK-027 hingga SCK-035)
+      { code: "SCK-027", category: "GENERAL WORKERS (NEPAL)", name: "HARI PANDIT KUMHAR", ic: "11780884", nationality: "Nepal", age: 27, dob: "1999-02-25", joinDate: "2023-03-29", position: "CROSS CUT", phone: "0142765130", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-028", category: "GENERAL WORKERS (NEPAL)", name: "BINOD KUMAR MANDLA", ic: "PA0328610", nationality: "Nepal", age: 37, dob: "1989-03-02", joinDate: "2023-03-29", position: "BANDSAW", phone: "0147762728", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 16, ot20: 0, allowance: 50 },
+      { code: "SCK-029", category: "GENERAL WORKERS (NEPAL)", name: "HAIRANU PANDIT KUMHAR", ic: "PA0709679", nationality: "Nepal", age: 24, dob: "2002-11-28", joinDate: "2023-03-29", position: "UV LINE", phone: "0147752657", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-030", category: "GENERAL WORKERS (NEPAL)", name: "SUNIL KUMAR CHAUDHARY", ic: "PA0713793", nationality: "Nepal", age: 23, dob: "2003-04-07", joinDate: "2023-06-28", position: "SANDING", phone: "0142920735", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 8, allowance: 50 },
+      { code: "SCK-031", category: "GENERAL WORKERS (NEPAL)", name: "BHAGAWATI KEWAT", ic: "PA0388470", nationality: "Nepal", age: 26, dob: "2000-11-25", joinDate: "2023-06-28", position: "GLUE", phone: "0147960737", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-032", category: "GENERAL WORKERS (NEPAL)", name: "LABH KUMAR THAKUR", ic: "PA4948073", nationality: "Nepal", age: 29, dob: "1997-11-06", joinDate: "2024-04-09", position: "BANDSAW", phone: "01112564046", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 8, ot15: 16, ot20: 0, allowance: 50 },
+      { code: "SCK-033", category: "GENERAL WORKERS (NEPAL)", name: "DINESH MANDAL", ic: "PA4900828", nationality: "Nepal", age: 30, dob: "1996-05-17", joinDate: "2024-04-09", position: "GLUE", phone: "0179448420", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 8, ot15: 12, ot20: 0, allowance: 50 },
+      { code: "SCK-034", category: "GENERAL WORKERS (NEPAL)", name: "SHIV KUMAR MANDAL", ic: "PA4901021", nationality: "Nepal", age: 29, dob: "1997-09-07", joinDate: "2024-04-09", position: "UV LINE", phone: "0179390278", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 8, ot15: 14, ot20: 0, allowance: 50 },
+      { code: "SCK-035", category: "GENERAL WORKERS (NEPAL)", name: "SAHMUDIN ANSARI", ic: "PA1297086", nationality: "Nepal", age: 38, dob: "1988-04-21", joinDate: "2024-05-10", position: "CROSS CUT", phone: "01114294760", address: "ASRAMA PEKERJA SCK WOODEN INDUSTRIES, CHERATING", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 8, ot15: 12, ot20: 0, allowance: 50 },
+
+      // GENERAL WORKERS (LOCAL) — 15 ORANG (SCK-036 hingga SCK-050)
+      { code: "SCK-036", category: "GENERAL WORKERS (LOCAL)", name: "AZILA BINTI AWANG", ic: "830810-06-5176", nationality: "Malaysia", age: 43, dob: "1983-08-10", joinDate: "2002-01-21", position: "UV", phone: "0179232980", address: "JALAN BUKIT PALAS, KAMPUNG PENGKALAN BATA , CHERATING 26080 KTN, PHG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 8, ot20: 0, allowance: 100 },
+      { code: "SCK-037", category: "GENERAL WORKERS (LOCAL)", name: "HALIMAH BINTI HAMID", ic: "730524-06-5038", nationality: "Malaysia", age: 53, dob: "1973-05-24", joinDate: "2003-09-15", position: "UV", phone: "01125513621", address: "KAMPUNG CHENDOR TENGAH ,38A,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 6, ot20: 0, allowance: 100 },
+      { code: "SCK-038", category: "GENERAL WORKERS (LOCAL)", name: "HASNAH HAMID", ic: "690924-06-5236", nationality: "Malaysia", age: 57, dob: "1969-09-24", joinDate: "2004-11-22", position: "TNG", phone: "0179701151", address: "KAMPUNG CHENDOR TENGAH ,38A,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 8, ot20: 0, allowance: 100 },
+      { code: "SCK-039", category: "GENERAL WORKERS (LOCAL)", name: "NAROHANI BINTI JUSOH", ic: "710113-11-5426", nationality: "Malaysia", age: 55, dob: "1971-01-13", joinDate: "2003-06-03", position: "TNG", phone: "0199745827", address: "KAMPUNG KUBANG IKAN , CHERATING, 26080 KTN.", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 6, ot20: 0, allowance: 100 },
+      { code: "SCK-040", category: "GENERAL WORKERS (LOCAL)", name: "PARIDAH YUNUS", ic: "671027-11-5228", nationality: "Malaysia", age: 59, dob: "1967-10-27", joinDate: "2018-01-02", position: "SANDING", phone: "01112979140", address: "JALAN BUKIT PALAS,CHERATING 26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 4, ot20: 0, allowance: 100 },
+      { code: "SCK-041", category: "GENERAL WORKERS (LOCAL)", name: "ROHANA BINTI ISMAIL", ic: "850602-06-5196", nationality: "Malaysia", age: 41, dob: "1985-06-02", joinDate: "2003-01-08", position: "UV", phone: "0179776653", address: "38-A,KAMPUNG SEBERANG SUNGAI ULAR ,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 8, ot20: 0, allowance: 100 },
+      { code: "SCK-042", category: "GENERAL WORKERS (LOCAL)", name: "RUHANI BT ABD RASHID", ic: "820610-11-5176", nationality: "Malaysia", age: 44, dob: "1982-06-10", joinDate: "2008-01-08", position: "PACKING", phone: "01117845074", address: "A66, JALAN BUKIT PALAS,KG. BARU CHERATING 26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 10, ot20: 0, allowance: 100 },
+      { code: "SCK-043", category: "GENERAL WORKERS (LOCAL)", name: "SARIMAH BINTI DAUD", ic: "830916-06-5924", nationality: "Malaysia", age: 43, dob: "1983-09-16", joinDate: "2004-07-01", position: "SANDING", phone: "01123774486", address: "LOT 115/2132, KG. SEBERANG SUNGAI ULAR, 26080 KTN", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 8, ot20: 0, allowance: 100 },
+      { code: "SCK-044", category: "GENERAL WORKERS (LOCAL)", name: "SITI ZAHARAH BINTI MOHD ALI", ic: "780804-06-5310", nationality: "Malaysia", age: 48, dob: "1978-08-04", joinDate: "2005-03-01", position: "PACKING", phone: "0175368500", address: "KAMPUNG CHERATING , JALAN BUKIT PALAS,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 8, ot20: 0, allowance: 100 },
+      { code: "SCK-045", category: "GENERAL WORKERS (LOCAL)", name: "ZUNIKAHANIM BT MOHAMED ZAINAL", ic: "820806-06-5190", nationality: "Malaysia", age: 44, dob: "1982-08-06", joinDate: "2006-03-28", position: "BRUSH & PACKING", phone: "0197402738", address: "303,KG CHERATING ,26080 KUANTAN PAHANG DARUL MAKMUR", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 16, ot15: 10, ot20: 0, allowance: 100 },
+      { code: "SCK-046", category: "GENERAL WORKERS (LOCAL)", name: "NURUL FATIHAH BT ROSLI", ic: "030424-11-0076", nationality: "Malaysia", age: 23, dob: "2003-04-24", joinDate: "2021-03-26", position: "GLUE", phone: "0179482536", address: "NO 24, LORONG 5,PERKAMPUNGAN CHERATING DAMAI ,26080 KTN, PHG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 12, ot20: 0, allowance: 100 },
+      { code: "SCK-047", category: "GENERAL WORKERS (LOCAL)", name: "INTAN NAJIHAH BINTI MOHD NAZRI", ic: "030607-11-0300", nationality: "Malaysia", age: 23, dob: "2003-06-07", joinDate: "2021-11-01", position: "PACKING", phone: "0126625417", address: "KAMPUNG BARU BUKIT PALAS CHERATING,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 10, ot20: 0, allowance: 100 },
+      { code: "SCK-048", category: "GENERAL WORKERS (LOCAL)", name: "MOHD ZAIDI BIN ABDUL HAMID", ic: "870124-11-5803", nationality: "Malaysia", age: 39, dob: "1987-01-24", joinDate: "2021-04-22", position: "UV", phone: "0166346132", address: "NO 3/1364,KG BUKIT PALAS ,JALAN KEMAMAN ,26080 KUANTAN PAHANG", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 14, ot20: 4, allowance: 100 },
+      { code: "SCK-049", category: "GENERAL WORKERS (LOCAL)", name: "KHAIRUL HAFIZI BIN UMAR", ic: "000614-02-1325", nationality: "Malaysia", age: 26, dob: "2000-06-14", joinDate: "2021-11-12", position: "BANDSAW", phone: "0179177232", address: "124 JALAN KUANTAN KEMAMAN BATU 27 KG BARU CHERATING, 26080 KTN", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 16, ot20: 4, allowance: 100 },
+      { code: "SCK-050", category: "GENERAL WORKERS (LOCAL)", name: "ROSNANI BINTI IDRIS", ic: "710611-06-5046", nationality: "Malaysia", age: 55, dob: "1971-06-11", joinDate: "2022-10-17", position: "TNG", phone: "01125546042", address: "NO. 65A, JLN BUKIT PALAS, KG. BARU CHERATING, 26080 KTN", note: "", payType: "DAILY", basicSalary: 65.38, alEntitled: 12, ot15: 6, ot20: 0, allowance: 100 },
+
+      // STAFF (BULANAN) — 17 ORANG (SCK-051 hingga SCK-067)
+      { code: "SCK-051", category: "STAFF", name: "TAN SOO LENG", ic: "761116-01-6749", nationality: "Malaysia", age: 50, dob: "1976-11-16", joinDate: "2000-08-01", position: "OPERATION MANAGER", phone: "0179580433", address: "KUANTAN, PAHANG DARUL MAKMUR", note: "", payType: "MONTHLY", basicSalary: 4500.00, alEntitled: 16, ot15: 0, ot20: 0, allowance: 500 },
+      { code: "SCK-052", category: "STAFF", name: "TAN CHIN YEE", ic: "790821-04-5222", nationality: "Malaysia", age: 47, dob: "1979-08-21", joinDate: "2005-05-01", position: "ADMIN EXCUTIVE", phone: "0122634772", address: "KUANTAN, PAHANG DARUL MAKMUR", note: "", payType: "MONTHLY", basicSalary: 2400.00, alEntitled: 16, ot15: 0, ot20: 0, allowance: 250 },
+      { code: "SCK-053", category: "STAFF", name: "CHAN SAU KUAN", ic: "780927-06-5118", nationality: "Malaysia", age: 48, dob: "1978-09-27", joinDate: "2004-06-01", position: "ACCOUNT", phone: "0129617863", address: "KUANTAN, PAHANG DARUL MAKMUR", note: "", payType: "MONTHLY", basicSalary: 2400.00, alEntitled: 16, ot15: 0, ot20: 0, allowance: 250 },
+      { code: "SCK-054", category: "STAFF", name: "MOCHAMMAD RICHWAN", ic: "E7421943", nationality: "Indonesia", age: 52, dob: "1974-08-17", joinDate: "2020-09-29", position: "BANDSAW", phone: "01125769544", address: "CHERATING, 26080 KUANTAN PAHANG", note: "TIMBERLUX", payType: "MONTHLY", basicSalary: 1850.00, alEntitled: 16, ot15: 12, ot20: 0, allowance: 150 },
+      { code: "SCK-055", category: "STAFF", name: "PRAIWAN KHAMHAENGPHON", ic: "AD0003610", nationality: "Thailand", age: 55, dob: "1971-10-20", joinDate: "2019-04-29", position: "BANDSAW", phone: "0173204991", address: "CHERATING ,BUKIT PALAS,26080 KUANTAN PAHANG", note: "TIMBERLUX", payType: "MONTHLY", basicSalary: 1850.00, alEntitled: 16, ot15: 12, ot20: 0, allowance: 150 },
+      { code: "SCK-056", category: "STAFF", name: "MAJID BIN MAT LAZIM", ic: "611016-06-5005", nationality: "Malaysia", age: 65, dob: "1961-10-16", joinDate: "2022-03-01", position: "TECHNICIAN", phone: "01117879209", address: "NO . 1,LORONG SUNGAI ISAP 34,TAMAN MURNI, 25150 KUANTAN", note: "", payType: "MONTHLY", basicSalary: 2100.00, alEntitled: 12, ot15: 10, ot20: 4, allowance: 200 },
+      { code: "SCK-057", category: "STAFF", name: "MOHAMAD NORDIN BIN MOHAMMED LOT", ic: "011204-11-0249", nationality: "Malaysia", age: 25, dob: "2001-12-04", joinDate: "2022-04-06", position: "SAFETY", phone: "0179396605", address: "NO.15 ,JALAN BUKIT PALAS,CHERATING 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 2200.00, alEntitled: 12, ot15: 10, ot20: 4, allowance: 200 },
+      { code: "SCK-058", category: "STAFF", name: "ROMRAN BIN ISMAIL", ic: "620822-06-5055", nationality: "Malaysia", age: 64, dob: "1962-08-22", joinDate: "2014-09-02", position: "DRIVER", phone: "0199674002", address: "CHERATING, 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 1950.00, alEntitled: 16, ot15: 12, ot20: 0, allowance: 200 },
+      { code: "SCK-059", category: "STAFF", name: "ROSLI BIN MD YASIN", ic: "621101-06-5519", nationality: "Malaysia", age: 64, dob: "1962-11-01", joinDate: "1997-07-15", position: "SETTING MACHINE", phone: "0179702146", address: "NO.20,LORONG 29,PAKR BALOK BARU ( PINE ),26100 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 2100.00, alEntitled: 16, ot15: 10, ot20: 0, allowance: 200 },
+      { code: "SCK-060", category: "STAFF", name: "NORUL HAIDA BINTI PUTEH", ic: "760502-06-5536", nationality: "Malaysia", age: 50, dob: "1976-05-02", joinDate: "2001-12-25", position: "TALLY", phone: "0199454815", address: "KAMPUNG BUKIT PALAS CHERATING 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 1850.00, alEntitled: 16, ot15: 8, ot20: 0, allowance: 150 },
+      { code: "SCK-061", category: "STAFF", name: "NUR SAKINAH ZAKARIA", ic: "900218-06-5784", nationality: "Malaysia", age: 36, dob: "1990-02-18", joinDate: "2013-09-01", position: "SHIPPING", phone: "0179348120", address: "CHERATING, 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 1850.00, alEntitled: 16, ot15: 6, ot20: 0, allowance: 150 },
+      { code: "SCK-062", category: "STAFF", name: "RUHAIZA BINTI ABD RASHID", ic: "861029-11-5114", nationality: "Malaysia", age: 40, dob: "1986-10-29", joinDate: "2004-07-07", position: "TALLY", phone: "0129512011", address: "JALAN BUKIT PALAS,CHERATING 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 1850.00, alEntitled: 16, ot15: 8, ot20: 0, allowance: 150 },
+      { code: "SCK-063", category: "STAFF", name: "NUR AQILA SYAFIKA BT. MOHD ZAKI", ic: "990607-11-5564", nationality: "Malaysia", age: 27, dob: "1999-06-07", joinDate: "2020-01-02", position: "DATA", phone: "0136395627", address: "NO 27 PERKAMPUNGAN CHERATING DAMAI 5 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 1850.00, alEntitled: 16, ot15: 4, ot20: 0, allowance: 150 },
+      { code: "SCK-064", category: "STAFF", name: "AZLINA BINTI ISMAIL", ic: "770122-06-5672", nationality: "Malaysia", age: 49, dob: "1977-01-22", joinDate: "2021-12-27", position: "DATA → HR (JAN, 23)", phone: "0199584118", address: "NO.50, LORONG CHERATING DAMAI 1 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 2400.00, alEntitled: 16, ot15: 0, ot20: 0, allowance: 250 },
+      { code: "SCK-065", category: "STAFF", name: "KHALTHOM BINTI JUSOH", ic: "720123-06-5230", nationality: "Malaysia", age: 54, dob: "1972-01-23", joinDate: "2022-10-24", position: "SUPERVISOR", phone: "0142992691", address: "NO . 22 LORONG SUNGAI BAGING 1 ,TAMAN BAGING JAYA ,26080 KTN, PHG", note: "", payType: "MONTHLY", basicSalary: 2300.00, alEntitled: 12, ot15: 10, ot20: 0, allowance: 200 },
+      { code: "SCK-066", category: "STAFF", name: "MOHD ARIFF FARHAM BIN HARUN", ic: "930223-06-5495", nationality: "Malaysia", age: 33, dob: "1993-02-23", joinDate: "2022-11-29", position: "PRODUCTION SUPERVISOR", phone: "0145329269", address: "CHERATING, 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 2300.00, alEntitled: 12, ot15: 12, ot20: 4, allowance: 200 },
+      { code: "SCK-067", category: "STAFF", name: "KAMAL PRASAD GAUTAM", ic: "PA1581370", nationality: "Nepal", age: 43, dob: "1983-06-26", joinDate: "2023-06-28", position: "SUPERVISOR", phone: "0179562435", address: "CHERATING, 26080 KUANTAN PAHANG", note: "", payType: "MONTHLY", basicSalary: 2300.00, alEntitled: 12, ot15: 12, ot20: 4, allowance: 200 }
+    ];
+
+    function buildInitialEmployeeList() {
+      return MASTER_PEKERJA_2026.map((item, idx) => ({
+        id: `EMP-${String(idx + 1).padStart(3, "0")}`,
+        code: item.code,
+        category: item.category,
+        name: item.name,
+        ic: item.ic,
+        nationality: item.nationality,
+        age: item.age,
+        dob: item.dob,
+        joinDate: item.joinDate,
+        position: item.position,
+        phone: item.phone,
+        address: item.address,
+        note: item.note || "",
+        bank: "Maybank / Akaun Gaji Pekerja",
+        payType: item.payType,
+        basicSalary: item.basicSalary,
+        daysWorked: 26,
+        uplDays: 0,
+        ot15Hours: item.ot15 || 0,
+        ot20Hours: item.ot20 || 0,
+        ot30Hours: 0,
+        allowance: item.allowance || 0,
+        commission: 0,
+        bonus: 0,
+        encashAlDays: 0,
+        angpaw: 0,
+        alEntitledOverride: item.alEntitled,
+        alTaken: 0,
+        elTaken: 0,
+        mcTaken: 0,
+        taxStatus: item.age >= 30 ? "MARRIED_NW" : "SINGLE",
+        advanceDed: 0,
+        otherDed: 0,
+        pcbManual: "",
+        epfFull: true
+      }));
+    }
+
+    // ===================================================================== -->
+    // SIMPANAN LOKAL (LOCALSTORAGE) & PENYELARASAN ANTARAMUKA               -->
+    // ===================================================================== -->
+    function getStorageKey() {
+      const y = document.getElementById("payroll-year")?.value || "2026";
+      const m = document.getElementById("payroll-month")?.value || "11";
+      return `sck_wooden_2026_payroll_${y}_${m}`;
+    }
+
+    window.saveLocalState = function (triggerCloud = true) {
+      try {
+        localStorage.setItem(getStorageKey(), JSON.stringify(window.employees));
+        localStorage.setItem("sck_wooden_settings_2026_v1", JSON.stringify(window.settings));
+        if (triggerCloud && typeof window.syncToCloud === "function") {
+          window.syncToCloud();
+        }
+      } catch (e) {
+        console.warn("LocalStorage penuh atau disekat:", e);
+      }
+    };
+
+    function loadLocalState() {
+      try {
+        const savedSettings = localStorage.getItem("sck_wooden_settings_2026_v1");
+        if (savedSettings) {
+          window.settings = { ...window.DEFAULT_SETTINGS, ...JSON.parse(savedSettings) };
+        }
+        const savedEmp = localStorage.getItem(getStorageKey());
+        if (savedEmp) {
+          const parsed = JSON.parse(savedEmp);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            window.employees = parsed;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn("Ralat membaca LocalStorage:", e);
+      }
+      window.employees = buildInitialEmployeeList();
+      window.saveLocalState(false);
+    }
+
+    window.onPeriodChange = function () {
+      loadLocalState();
+      if (window.currentUser && typeof window.loadCloudPayrollData === "function") {
+        window.loadCloudPayrollData();
+      }
+      window.refreshAllUI();
+      window.showToast("Tempoh penggajian dikemas kini.", "info");
+    };
+
+    window.resetMasterEmployeeList = function () {
+      window.employees = buildInitialEmployeeList();
+      window.saveLocalState(true);
+      window.refreshAllUI();
+      window.showToast("Senarai 67 pekerja aktif PEKERJA 2026 berjaya dimuatkan semula!", "success");
+    };
+
+    window.autoAdjustMinimumWage = function () {
+      const minW = Number(window.settings.minWage) || 1700;
+      const orpDays = Number(window.settings.orpDays) || 26;
+      const minDaily = Number((minW / orpDays).toFixed(2));
+      let count = 0;
+
+      window.employees.forEach(emp => {
+        if (emp.payType === "DAILY") {
+          if (emp.basicSalary < minDaily) {
+            emp.basicSalary = minDaily;
+            count++;
+          }
+        } else {
+          if (emp.basicSalary < minW) {
+            emp.basicSalary = minW;
+            count++;
+          }
+        }
+      });
+
+      window.saveLocalState(true);
+      window.refreshAllUI();
+      window.showToast(`${count} pekerja telah diselaraskan ke Gaji Minimum ${formatRM(minW)}.`, "success");
+    };
+
+    // ===================================================================== -->
+    // RENDER DASHBOARD, JADUAL PEKERJA, SLIP GAJI A4 & LAPORAN BERKANUN     -->
+    // ===================================================================== -->
+    window.refreshAllUI = function () {
+      const totalEmp = window.employees.length;
+      document.getElementById("badge-emp-count").textContent = totalEmp;
+      document.getElementById("dash-min-wage").textContent = `${formatRM(window.settings.minWage)} / bln`;
+      const statTitle = document.getElementById("statutory-table-title");
+      if (statTitle) {
+        statTitle.textContent = `Senarai Caruman Berkanun Individu (${totalEmp} Pekerja Aktif)`;
+      }
+      populateSettingsForm();
+      renderDashboard();
+      renderEmployeeTable();
+      populatePayslipSelector();
+      renderPayslipPreview();
+      renderStatutoryReport();
+      if (window.lucide) lucide.createIcons();
+    };
+
+    function renderDashboard() {
+      let totalGross = 0;
+      let totalNet = 0;
+      let totalEmployer = 0;
+      let totalCost = 0;
+      let belowMinCount = 0;
+
+      const catMap = {};
+
+      window.employees.forEach(emp => {
+        const calc = calculateEmployeePayroll(emp);
+        totalGross += calc.grossPay;
+        totalNet += calc.netPay;
+        totalEmployer += calc.totalEmployerContrib;
+        totalCost += calc.totalCompanyCost;
+        if (calc.isBelowMinWage) belowMinCount++;
+
+        const catKey = emp.category || "LAIN-LAIN";
+        if (!catMap[catKey]) {
+          catMap[catKey] = { count: 0, baseAllow: 0, ot: 0, net: 0, employer: 0 };
+        }
+        catMap[catKey].count++;
+        catMap[catKey].baseAllow += (calc.netEarnedBasic + calc.allowance + calc.commission + calc.bonus);
+        catMap[catKey].ot += calc.totalOTPay;
+        catMap[catKey].net += calc.netPay;
+        catMap[catKey].employer += calc.totalEmployerContrib;
+      });
+
+      document.getElementById("kpi-gross").textContent = formatRM(totalGross);
+      document.getElementById("kpi-net").textContent = formatRM(totalNet);
+      document.getElementById("kpi-employer").textContent = formatRM(totalEmployer);
+      document.getElementById("kpi-total-cost").textContent = formatRM(totalCost);
+
+      const localCount = window.employees.filter(e => isLocalCitizen(e)).length;
+      const foreignCount = window.employees.length - localCount;
+      document.getElementById("kpi-emp-breakdown").textContent = `${window.employees.length} Pekerja Aktif (${localCount} Tempatan, ${foreignCount} Warga Asing)`;
+
+      // Minimum Wage Alert Banner
+      const banner = document.getElementById("compliance-alert-banner");
+      if (belowMinCount > 0) {
+        banner.classList.remove("hidden");
+        document.getElementById("compliance-alert-text").textContent =
+          `Terdapat ${belowMinCount} orang pekerja mempunyai kadar gaji di bawah paras gaji minimum semasa (${formatRM(window.settings.minWage)}).`;
+      } else {
+        banner.classList.add("hidden");
+      }
+
+      // Category Table
+      const tbody = document.getElementById("dept-summary-tbody");
+      tbody.innerHTML = "";
+      Object.entries(catMap).forEach(([catName, d]) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-100">${catName}</td>
+          <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 font-semibold">${d.count}</span></td>
+          <td class="py-3 px-4 text-right font-medium">${formatRM(d.baseAllow)}</td>
+          <td class="py-3 px-4 text-right text-amber-600 dark:text-amber-400 font-semibold">${formatRM(d.ot)}</td>
+          <td class="py-3 px-4 text-right text-blue-600 dark:text-blue-400 font-bold">${formatRM(d.net)}</td>
+          <td class="py-3 px-4 text-right text-purple-600 dark:text-purple-400 font-semibold">${formatRM(d.employer)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.renderEmployeeTable = function () {
+      const search = (document.getElementById("filter-search")?.value || "").toLowerCase();
+      const catFilter = document.getElementById("filter-category")?.value || "ALL";
+      const payFilter = document.getElementById("filter-paytype")?.value || "ALL";
+      const citizenFilter = document.getElementById("filter-citizen")?.value || "ALL";
+
+      const filtered = window.employees.filter(emp => {
+        const matchSearch =
+          emp.name.toLowerCase().includes(search) ||
+          emp.code.toLowerCase().includes(search) ||
+          emp.ic.toLowerCase().includes(search) ||
+          emp.position.toLowerCase().includes(search) ||
+          (emp.note || "").toLowerCase().includes(search);
+        const matchCat = catFilter === "ALL" || emp.category === catFilter;
+        const matchPay = payFilter === "ALL" || emp.payType === payFilter;
+        const isLocal = isLocalCitizen(emp);
+        const matchCitizen = citizenFilter === "ALL" || (citizenFilter === "LOCAL" ? isLocal : !isLocal);
+        return matchSearch && matchCat && matchPay && matchCitizen;
+      });
+
+      document.getElementById("table-showing-text").textContent =
+        `Menunjukkan ${filtered.length} daripada ${window.employees.length} pekerja aktif`;
+
+      const tbody = document.getElementById("employee-table-body");
+      tbody.innerHTML = "";
+
+      filtered.forEach(emp => {
+        const calc = calculateEmployeePayroll(emp);
+        const totalOtHrs = (Number(emp.ot15Hours) || 0) + (Number(emp.ot20Hours) || 0) + (Number(emp.ot30Hours) || 0);
+        const otherIncome = calc.allowance + calc.commission + calc.bonus + calc.encashAlPay + calc.angpaw;
+        const isLocal = isLocalCitizen(emp);
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition";
+        tr.innerHTML = `
+          <td class="py-3 px-3">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px] font-bold">${emp.code}</span>
+              <span class="font-bold text-slate-900 dark:text-white">${emp.name}</span>
+              ${emp.note ? `<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 text-[10px] font-bold">${emp.note}</span>` : ""}
+            </div>
+            <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+              <span class="font-mono">${emp.ic}</span>
+              <span class="px-1.5 py-0.2 rounded text-[10px] ${isLocal ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300" : "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300"}">
+                ${emp.nationality} (${emp.age} thn)
+              </span>
+              ${emp.phone ? `<span class="text-slate-400">• ${emp.phone}</span>` : ""}
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <div class="font-semibold text-slate-800 dark:text-slate-200">${emp.position}</div>
+            <div class="text-[10px] text-slate-500">${emp.category}</div>
+          </td>
+          <td class="py-3 px-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${emp.payType === "MONTHLY" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300" : "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300"}">
+              ${emp.payType === "MONTHLY" ? "Bulanan" : `Harian (${emp.daysWorked}h)`}
+            </span>
+            ${calc.isBelowMinWage ? `<div class="text-[10px] text-rose-600 font-bold mt-0.5">⚠ Bawah RM${window.settings.minWage}</div>` : ""}
+          </td>
+          <td class="py-3 px-3 text-right font-semibold">
+            <div>${formatRM(calc.netEarnedBasic)}</div>
+            <div class="text-[10px] text-slate-400">${emp.payType === "DAILY" ? `${formatRM(emp.basicSalary)}/hari` : `ORP: ${formatRM(calc.orp)}`}</div>
+          </td>
+          <td class="py-3 px-3 text-right">
+            <div class="font-semibold text-amber-600 dark:text-amber-400">${formatRM(calc.totalOTPay)}</div>
+            <div class="text-[10px] text-slate-400">${totalOtHrs} jam</div>
+          </td>
+          <td class="py-3 px-3 text-right font-medium">
+            ${formatRM(otherIncome)}
+          </td>
+          <td class="py-3 px-3 text-right text-rose-600 dark:text-rose-400 font-semibold">
+            <div>-${formatRM(calc.totalDeductions)}</div>
+            <div class="text-[10px] text-slate-400">EPF:${calc.epfEmp.toFixed(0)} SOC:${calc.socsoEmp.toFixed(2)}</div>
+          </td>
+          <td class="py-3 px-3 text-right font-extrabold text-emerald-700 dark:text-emerald-400 text-sm">
+            ${formatRM(calc.netPay)}
+          </td>
+          <td class="py-3 px-3 text-center">
+            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-semibold text-[11px]">
+              AL: ${calc.leaveInfo.alBalance}/${calc.leaveInfo.alEntitled} | MC: ${calc.leaveInfo.mcBalance}
+            </span>
+          </td>
+          <td class="py-3 px-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openEditEmployeeModal('${emp.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-sm transition">
+                Edit
+              </button>
+              <button onclick="viewEmployeePayslip('${emp.id}')" title="Lihat Slip Gaji" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    // ===================================================================== -->
+    // TAB 3: SLIP GAJI A4 & KONGSI WHATSAPP                                 -->
+    // ===================================================================== -->
+    function populatePayslipSelector() {
+      const sel = document.getElementById("payslip-employee-select");
+      if (!sel) return;
+      const currentVal = sel.value;
+      sel.innerHTML = "";
+      window.employees.forEach(emp => {
+        const opt = document.createElement("option");
+        opt.value = emp.id;
+        opt.textContent = `${emp.code} — ${emp.name} (${emp.position})`;
+        sel.appendChild(opt);
+      });
+      if (currentVal && window.employees.some(e => e.id === currentVal)) {
+        sel.value = currentVal;
+      }
+    }
+
+    window.viewEmployeePayslip = function (empId) {
+      const sel = document.getElementById("payslip-employee-select");
+      if (sel) sel.value = empId;
+      switchTab("payslip");
+      renderPayslipPreview();
+    };
+
+    window.openEditModalFromPayslip = function () {
+      const empId = document.getElementById("payslip-employee-select")?.value;
+      if (empId) openEditEmployeeModal(empId);
+    };
+
+    window.renderPayslipPreview = function () {
+      const empId = document.getElementById("payslip-employee-select")?.value || window.employees[0]?.id;
+      const emp = window.employees.find(e => e.id === empId) || window.employees[0];
+      if (!emp) return;
+
+      const calc = calculateEmployeePayroll(emp);
+      const monthSel = document.getElementById("payroll-month");
+      const monthName = monthSel.options[monthSel.selectedIndex].text.toUpperCase();
+      const yearVal = document.getElementById("payroll-year").value;
+
+      document.getElementById("ps-period").textContent = `${monthName} ${yearVal}`;
+
+      // Maklumat Pekerja
+      document.getElementById("ps-employee-details").innerHTML = `
+        <div><span class="text-slate-500 block text-[10px] uppercase">Nama Pekerja</span><strong class="text-slate-900">${emp.name}</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">ID / No. KP / Pasport</span><strong class="text-slate-900">${emp.code} / ${emp.ic}</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">Bahagian / Jawatan</span><strong class="text-slate-900">${emp.position} ${emp.note ? `(${emp.note})` : ""}</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">Kategori & Warganegara</span><strong class="text-slate-900">${emp.nationality} (${emp.age} thn)</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">Tarikh Mula Kerja</span><strong class="text-slate-900">${emp.joinDate} (${calc.leaveInfo.years} thn)</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">Skim Gaji</span><strong class="text-slate-900">${emp.payType === "MONTHLY" ? "Gaji Bulanan" : `Gaji Harian (${emp.daysWorked} hari)`}</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">Kadar Harian (ORP)</span><strong class="text-slate-900">${formatRM(calc.orp)}</strong></div>
+        <div><span class="text-slate-500 block text-[10px] uppercase">Kadar Sejam (HRP)</span><strong class="text-slate-900">${formatRM(calc.hrp)}</strong></div>
+      `;
+
+      // Senarai Pendapatan
+      const earnList = document.getElementById("ps-earnings-list");
+      let earnHtml = `
+        <div class="flex justify-between">
+          <span>${emp.payType === "MONTHLY" ? "Gaji Pokok Bulanan" : `Upah Harian (${emp.daysWorked} hari × ${formatRM(emp.basicSalary)})`}</span>
+          <span class="font-semibold">${formatRM(calc.earnedBasic)}</span>
+        </div>
+      `;
+      if (calc.uplDeduction > 0) {
+        earnHtml += `<div class="flex justify-between text-rose-700"><span>Tolakan Cuti Tanpa Gaji (${emp.uplDays} hari)</span><span>-${formatRM(calc.uplDeduction)}</span></div>`;
+      }
+      if (calc.ot15Pay > 0) {
+        earnHtml += `<div class="flex justify-between"><span>OT Hari Biasa 1.5x (${emp.ot15Hours} jam)</span><span class="font-semibold">${formatRM(calc.ot15Pay)}</span></div>`;
+      }
+      if (calc.ot20Pay > 0) {
+        earnHtml += `<div class="flex justify-between"><span>OT Hari Rehat 2.0x (${emp.ot20Hours} jam)</span><span class="font-semibold">${formatRM(calc.ot20Pay)}</span></div>`;
+      }
+      if (calc.ot30Pay > 0) {
+        earnHtml += `<div class="flex justify-between"><span>OT Cuti Umum 3.0x (${emp.ot30Hours} jam)</span><span class="font-semibold">${formatRM(calc.ot30Pay)}</span></div>`;
+      }
+      if (calc.allowance > 0) {
+        earnHtml += `<div class="flex justify-between"><span>Elaun Tetap / Syif / Kedatangan</span><span class="font-semibold">${formatRM(calc.allowance)}</span></div>`;
+      }
+      if (calc.commission > 0) {
+        earnHtml += `<div class="flex justify-between"><span>Komisen / Insentif Produktiviti</span><span class="font-semibold">${formatRM(calc.commission)}</span></div>`;
+      }
+      if (calc.bonus > 0) {
+        earnHtml += `<div class="flex justify-between"><span>Bonus</span><span class="font-semibold">${formatRM(calc.bonus)}</span></div>`;
+      }
+      if (calc.encashAlPay > 0) {
+        earnHtml += `<div class="flex justify-between"><span>Gantian Cuti Tahunan Tidak Digunakan (${emp.encashAlDays} hari)</span><span class="font-semibold">${formatRM(calc.encashAlPay)}</span></div>`;
+      }
+      if (calc.angpaw > 0) {
+        earnHtml += `<div class="flex justify-between"><span>Angpaw / Saguhati</span><span class="font-semibold">${formatRM(calc.angpaw)}</span></div>`;
+      }
+      earnList.innerHTML = earnHtml;
+      document.getElementById("ps-total-gross").textContent = formatRM(calc.grossPay);
+
+      // Senarai Potongan
+      const dedList = document.getElementById("ps-deductions-list");
+      let dedHtml = `
+        <div class="flex justify-between"><span>Caruman KWSP / EPF (Pekerja)</span><span class="font-semibold">${formatRM(calc.epfEmp)}</span></div>
+        <div class="flex justify-between"><span>PERKESO / SOCSO (Lindung 24 Jam)</span><span class="font-semibold">${formatRM(calc.socsoEmp)}</span></div>
+        <div class="flex justify-between"><span>Sistem Insurans Pekerjaan (EIS)</span><span class="font-semibold">${formatRM(calc.eisEmp)}</span></div>
+        <div class="flex justify-between"><span>Potongan Cukai Berjadual (PCB LHDN)</span><span class="font-semibold">${formatRM(calc.pcb)}</span></div>
+      `;
+      if (calc.advanceDed > 0) {
+        dedHtml += `<div class="flex justify-between"><span>Potongan Pinjaman / Pendahuluan Gaji</span><span class="font-semibold">${formatRM(calc.advanceDed)}</span></div>`;
+      }
+      if (calc.otherDed > 0) {
+        dedHtml += `<div class="flex justify-between"><span>Potongan Asrama / Lain-lain</span><span class="font-semibold">${formatRM(calc.otherDed)}</span></div>`;
+      }
+      dedList.innerHTML = dedHtml;
+      document.getElementById("ps-total-deductions").textContent = formatRM(calc.totalDeductions);
+
+      // Caruman Majikan
+      document.getElementById("ps-employer-contrib").innerHTML = `
+        <div class="flex justify-between"><span>KWSP (EPF) Majikan:</span><strong>${formatRM(calc.epfEmpr)}</strong></div>
+        <div class="flex justify-between"><span>PERKESO (SOCSO 24 Jam) Majikan:</span><strong>${formatRM(calc.socsoEmpr)}</strong></div>
+        <div class="flex justify-between"><span>EIS (SIP) Majikan:</span><strong>${formatRM(calc.eisEmpr)}</strong></div>
+        <div class="flex justify-between"><span>HRDF (HRD Corp 1%) Majikan:</span><strong>${formatRM(calc.hrdfEmpr)}</strong></div>
+        <div class="flex justify-between border-t border-slate-200 pt-1 text-slate-900"><span>Jumlah Caruman Majikan:</span><strong>${formatRM(calc.totalEmployerContrib)}</strong></div>
+      `;
+
+      document.getElementById("ps-net-pay").textContent = formatRM(calc.netPay);
+      document.getElementById("ps-bank-info").textContent = `No. Tel: ${emp.phone || "-"} | Dikreditkan ke: ${emp.bank || "Akaun Gaji Pekerja"}`;
+
+      // Baki Cuti AL & MC
+      const lv = calc.leaveInfo;
+      document.getElementById("ps-leave-summary").innerHTML = `
+        <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
+          <div class="text-[10px] text-slate-500">Kelayakan AL Tahunan</div>
+          <div class="font-extrabold text-slate-900">${lv.alEntitled} Hari</div>
+        </div>
+        <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+          <div class="text-[10px] text-emerald-700">Baki Cuti Tahunan (AL)</div>
+          <div class="font-extrabold text-emerald-900">${lv.alBalance} Hari</div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
+          <div class="text-[10px] text-slate-500">Kelayakan MC / Wad</div>
+          <div class="font-extrabold text-slate-900">${lv.mcEntitled} / ${lv.hospEntitled} Hari</div>
+        </div>
+        <div class="p-2 rounded-lg bg-blue-50 border border-blue-200">
+          <div class="text-[10px] text-blue-700">Baki Cuti Sakit (MC)</div>
+          <div class="font-extrabold text-blue-900">${lv.mcBalance} Hari</div>
+        </div>
+      `;
+    };
+
+    window.sharePayslipWhatsApp = function () {
+      const empId = document.getElementById("payslip-employee-select")?.value;
+      const emp = window.employees.find(e => e.id === empId);
+      if (!emp) return;
+      const calc = calculateEmployeePayroll(emp);
+      const monthSel = document.getElementById("payroll-month");
+      const period = `${monthSel.options[monthSel.selectedIndex].text} ${document.getElementById("payroll-year").value}`;
+
+      const msg =
+        `*PENYATA GAJI — SCK WOODEN INDUSTRIES SDN BHD*\n` +
+        `Tempoh: *${period}*\n` +
+        `Nama: *${emp.name}* (${emp.code})\n` +
+        `Bahagian/Jawatan: ${emp.position}\n` +
+        `-----------------------------\n` +
+        `Gaji Pokok/Upah: ${formatRM(calc.netEarnedBasic)}\n` +
+        `Kerja Lebih Masa (OT): ${formatRM(calc.totalOTPay)}\n` +
+        `Elaun & Lain-lain: ${formatRM(calc.allowance + calc.commission + calc.bonus)}\n` +
+        `*Gaji Kasar: ${formatRM(calc.grossPay)}*\n` +
+        `-----------------------------\n` +
+        `Potongan KWSP (EPF): -${formatRM(calc.epfEmp)}\n` +
+        `Potongan PERKESO 24J: -${formatRM(calc.socsoEmp)}\n` +
+        `Potongan EIS: -${formatRM(calc.eisEmp)}\n` +
+        `Potongan PCB/Lain: -${formatRM(calc.pcb + calc.advanceDed + calc.otherDed)}\n` +
+        `-----------------------------\n` +
+        `*GAJI BERSIH (NET PAY): ${formatRM(calc.netPay)}*\n` +
+        `Baki Cuti Tahunan (AL): ${calc.leaveInfo.alBalance} hari | Baki MC: ${calc.leaveInfo.mcBalance} hari\n` +
+        `_Cetakan Komputer - Tandatangan Tidak Diperlukan_`;
+
+      const cleanPhone = formatWhatsAppPhone(emp.phone);
+      const waUrl = cleanPhone
+        ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`
+        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(waUrl, "_blank", "noopener,noreferrer");
+    };
+
+    // ===================================================================== -->
+    // TAB 4: LAPORAN BERKANUN (EPF, SOCSO 24 JAM, EIS, PCB, HRDF)           -->
+    // ===================================================================== -->
+    function renderStatutoryReport() {
+      let epfEmpSum = 0, epfEmprSum = 0;
+      let socsoEmpSum = 0, socsoEmprSum = 0;
+      let eisEmpSum = 0, eisEmprSum = 0;
+      let pcbSum = 0, hrdfSum = 0;
+
+      const tbody = document.getElementById("statutory-table-body");
+      tbody.innerHTML = "";
+
+      window.employees.forEach(emp => {
+        const c = calculateEmployeePayroll(emp);
+        epfEmpSum += c.epfEmp;
+        epfEmprSum += c.epfEmpr;
+        socsoEmpSum += c.socsoEmp;
+        socsoEmprSum += c.socsoEmpr;
+        eisEmpSum += c.eisEmp;
+        eisEmprSum += c.eisEmpr;
+        pcbSum += c.pcb;
+        hrdfSum += c.hrdfEmpr;
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40";
+        tr.innerHTML = `
+          <td class="py-2 px-3 font-semibold text-slate-900 dark:text-slate-100">${emp.code} — ${emp.name}</td>
+          <td class="py-2 px-3 font-mono text-slate-500">${emp.ic}</td>
+          <td class="py-2 px-3 text-right">${formatRM(c.epfSubject)}</td>
+          <td class="py-2 px-3 text-right font-semibold">${formatRM(c.epfEmp)}</td>
+          <td class="py-2 px-3 text-right font-semibold text-emerald-700 dark:text-emerald-400">${formatRM(c.epfEmpr)}</td>
+          <td class="py-2 px-3 text-right">${formatRM(c.socsoEmp)} / ${formatRM(c.socsoEmpr)}</td>
+          <td class="py-2 px-3 text-right">${formatRM(c.eisEmp)} / ${formatRM(c.eisEmpr)}</td>
+          <td class="py-2 px-3 text-right text-rose-600 font-semibold">${formatRM(c.pcb)}</td>
+          <td class="py-2 px-3 text-right text-purple-600 font-semibold">${formatRM(c.hrdfEmpr)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("stat-epf-total").textContent = formatRM(epfEmpSum + epfEmprSum);
+      document.getElementById("stat-epf-split").textContent = `Pekerja: ${formatRM(epfEmpSum)} | Majikan: ${formatRM(epfEmprSum)}`;
+
+      document.getElementById("stat-socso-total").textContent = formatRM(socsoEmpSum + socsoEmprSum);
+      document.getElementById("stat-socso-split").textContent = `Pekerja: ${formatRM(socsoEmpSum)} | Majikan: ${formatRM(socsoEmprSum)}`;
+
+      document.getElementById("stat-eis-total").textContent = formatRM(eisEmpSum + eisEmprSum);
+      document.getElementById("stat-eis-split").textContent = `Pekerja: ${formatRM(eisEmpSum)} | Majikan: ${formatRM(eisEmprSum)}`;
+
+      document.getElementById("stat-pcb-total").textContent = formatRM(pcbSum);
+      document.getElementById("stat-hrdf-total").textContent = formatRM(hrdfSum);
+    }
+
+    // ===================================================================== -->
+    // MODAL EDIT / TAMBAH PEKERJA                                           -->
+    // ===================================================================== -->
+    window.togglePayTypeLabels = function () {
+      const payType = document.getElementById("edit-emp-paytype").value;
+      const lbl = document.getElementById("lbl-basic-rate");
+      lbl.textContent = payType === "DAILY" ? "Kadar Upah Sehari (RM/Hari) *" : "Gaji Pokok Bulanan (RM) *";
+    };
+
+    window.onModalCategoryChange = function () {
+      const cat = document.getElementById("edit-emp-category").value;
+      const natInput = document.getElementById("edit-emp-nationality");
+      if (cat === "GENERAL WORKERS (INDONESIAN)") natInput.value = "Indonesia";
+      else if (cat === "GENERAL WORKERS (MYANMAR)") natInput.value = "Myanmar";
+      else if (cat === "GENERAL WORKERS (NEPAL)") natInput.value = "Nepal";
+      else if (cat === "GENERAL WORKERS (LOCAL)") natInput.value = "Malaysia";
+      recalcModalPreview();
+    };
+
+    window.autoCalcAgeFromDob = function () {
+      const dobVal = document.getElementById("edit-emp-dob").value;
+      if (!dobVal) return;
+      const birth = new Date(dobVal);
+      const refYear = parseInt(document.getElementById("payroll-year")?.value || "2026", 10);
+      const age = refYear - birth.getFullYear();
+      if (age >= 16 && age <= 90) {
+        document.getElementById("edit-emp-age").value = age;
+      }
+      recalcModalPreview();
+    };
+
+    window.openEditEmployeeModal = function (empId) {
+      const emp = window.employees.find(e => e.id === empId);
+      if (!emp) return;
+
+      document.getElementById("modal-title").textContent = `Edit Gaji & Rekod: ${emp.name}`;
+      document.getElementById("modal-subtitle").textContent = `${emp.code} • ${emp.position} (${emp.category})`;
+      document.getElementById("edit-emp-id").value = emp.id;
+      document.getElementById("edit-emp-code").value = emp.code;
+      document.getElementById("edit-emp-name").value = emp.name;
+      document.getElementById("edit-emp-category").value = emp.category || "GENERAL WORKERS (LOCAL)";
+      document.getElementById("edit-emp-ic").value = emp.ic;
+      document.getElementById("edit-emp-position").value = emp.position;
+      document.getElementById("edit-emp-nationality").value = emp.nationality || "Malaysia";
+      document.getElementById("edit-emp-dob").value = emp.dob || "";
+      document.getElementById("edit-emp-age").value = emp.age;
+      document.getElementById("edit-emp-join").value = emp.joinDate;
+      document.getElementById("edit-emp-phone").value = emp.phone || "";
+      document.getElementById("edit-emp-note").value = emp.note || "";
+      document.getElementById("edit-emp-address").value = emp.address || "";
+      document.getElementById("edit-emp-bank").value = emp.bank || "";
+
+      document.getElementById("edit-emp-paytype").value = emp.payType;
+      document.getElementById("edit-emp-basic").value = emp.basicSalary;
+      document.getElementById("edit-emp-days-worked").value = emp.daysWorked ?? 26;
+      document.getElementById("edit-emp-upl").value = emp.uplDays ?? 0;
+
+      document.getElementById("edit-emp-ot15").value = emp.ot15Hours ?? 0;
+      document.getElementById("edit-emp-ot20").value = emp.ot20Hours ?? 0;
+      document.getElementById("edit-emp-ot30").value = emp.ot30Hours ?? 0;
+      document.getElementById("edit-emp-allowance").value = emp.allowance ?? 0;
+      document.getElementById("edit-emp-commission").value = emp.commission ?? 0;
+      document.getElementById("edit-emp-bonus").value = emp.bonus ?? 0;
+      document.getElementById("edit-emp-encash-al").value = emp.encashAlDays ?? 0;
+      document.getElementById("edit-emp-angpaw").value = emp.angpaw ?? 0;
+
+      const lv = calculateLeaveEntitlement(emp);
+      document.getElementById("edit-emp-al-entitled").value = emp.alEntitledOverride ?? lv.alEntitled;
+      document.getElementById("edit-emp-al-taken").value = emp.alTaken ?? 0;
+      document.getElementById("edit-emp-el-taken").value = emp.elTaken ?? 0;
+      document.getElementById("edit-emp-mc-taken").value = emp.mcTaken ?? 0;
+      document.getElementById("edit-emp-tax-status").value = emp.taxStatus || "SINGLE";
+      document.getElementById("edit-emp-advance").value = emp.advanceDed ?? 0;
+      document.getElementById("edit-emp-other-ded").value = emp.otherDed ?? 0;
+      document.getElementById("edit-emp-pcb-manual").value = emp.pcbManual ?? "";
+      document.getElementById("edit-emp-epf-11").checked = emp.epfFull !== false;
+
+      document.getElementById("btn-delete-emp").classList.remove("hidden");
+      togglePayTypeLabels();
+      recalcModalPreview();
+      document.getElementById("employee-modal").classList.remove("hidden");
+    };
+
+    window.openAddEmployeeModal = function () {
+      const nextNum = window.employees.length + 1;
+      document.getElementById("modal-title").textContent = "Tambah Pekerja Baharu";
+      document.getElementById("modal-subtitle").textContent = "Pematuhan Gaji Minimum RM 1,700.00 & Caruman Berkanun Automatik";
+      document.getElementById("edit-emp-id").value = "";
+      document.getElementById("edit-emp-code").value = `SCK-${String(nextNum).padStart(3, "0")}`;
+      document.getElementById("edit-emp-name").value = "";
+      document.getElementById("edit-emp-category").value = "GENERAL WORKERS (LOCAL)";
+      document.getElementById("edit-emp-ic").value = "";
+      document.getElementById("edit-emp-position").value = "GENERAL WORKER";
+      document.getElementById("edit-emp-nationality").value = "Malaysia";
+      document.getElementById("edit-emp-dob").value = "2000-01-01";
+      document.getElementById("edit-emp-age").value = 26;
+      document.getElementById("edit-emp-join").value = "2026-01-01";
+      document.getElementById("edit-emp-phone").value = "";
+      document.getElementById("edit-emp-note").value = "";
+      document.getElementById("edit-emp-address").value = "CHERATING, 26080 KUANTAN PAHANG";
+      document.getElementById("edit-emp-bank").value = "";
+
+      document.getElementById("edit-emp-paytype").value = "DAILY";
+      document.getElementById("edit-emp-basic").value = 65.38;
+      document.getElementById("edit-emp-days-worked").value = 26;
+      document.getElementById("edit-emp-upl").value = 0;
+
+      document.getElementById("edit-emp-ot15").value = 0;
+      document.getElementById("edit-emp-ot20").value = 0;
+      document.getElementById("edit-emp-ot30").value = 0;
+      document.getElementById("edit-emp-allowance").value = 100;
+      document.getElementById("edit-emp-commission").value = 0;
+      document.getElementById("edit-emp-bonus").value = 0;
+      document.getElementById("edit-emp-encash-al").value = 0;
+      document.getElementById("edit-emp-angpaw").value = 0;
+
+      document.getElementById("edit-emp-al-entitled").value = 0;
+      document.getElementById("edit-emp-al-taken").value = 0;
+      document.getElementById("edit-emp-el-taken").value = 0;
+      document.getElementById("edit-emp-mc-taken").value = 0;
+      document.getElementById("edit-emp-tax-status").value = "SINGLE";
+      document.getElementById("edit-emp-advance").value = 0;
+      document.getElementById("edit-emp-other-ded").value = 0;
+      document.getElementById("edit-emp-pcb-manual").value = "";
+      document.getElementById("edit-emp-epf-11").checked = true;
+
+      document.getElementById("btn-delete-emp").classList.add("hidden");
+      togglePayTypeLabels();
+      recalcModalPreview();
+      document.getElementById("employee-modal").classList.remove("hidden");
+    };
+
+    window.closeEmployeeModal = function () {
+      document.getElementById("employee-modal").classList.add("hidden");
+    };
+
+    function getModalFormObject() {
+      return {
+        id: document.getElementById("edit-emp-id").value || `EMP-${Date.now()}`,
+        code: document.getElementById("edit-emp-code").value.trim(),
+        category: document.getElementById("edit-emp-category").value,
+        name: document.getElementById("edit-emp-name").value.trim().toUpperCase(),
+        ic: document.getElementById("edit-emp-ic").value.trim(),
+        position: document.getElementById("edit-emp-position").value.trim().toUpperCase(),
+        nationality: document.getElementById("edit-emp-nationality").value.trim(),
+        dob: document.getElementById("edit-emp-dob").value,
+        age: Number(document.getElementById("edit-emp-age").value) || 28,
+        joinDate: document.getElementById("edit-emp-join").value,
+        phone: document.getElementById("edit-emp-phone").value.trim(),
+        note: document.getElementById("edit-emp-note").value.trim().toUpperCase(),
+        address: document.getElementById("edit-emp-address").value.trim().toUpperCase(),
+        bank: document.getElementById("edit-emp-bank").value.trim(),
+        payType: document.getElementById("edit-emp-paytype").value,
+        basicSalary: Number(document.getElementById("edit-emp-basic").value) || 0,
+        daysWorked: Number(document.getElementById("edit-emp-days-worked").value) || 0,
+        uplDays: Number(document.getElementById("edit-emp-upl").value) || 0,
+        ot15Hours: Number(document.getElementById("edit-emp-ot15").value) || 0,
+        ot20Hours: Number(document.getElementById("edit-emp-ot20").value) || 0,
+        ot30Hours: Number(document.getElementById("edit-emp-ot30").value) || 0,
+        allowance: Number(document.getElementById("edit-emp-allowance").value) || 0,
+        commission: Number(document.getElementById("edit-emp-commission").value) || 0,
+        bonus: Number(document.getElementById("edit-emp-bonus").value) || 0,
+        encashAlDays: Number(document.getElementById("edit-emp-encash-al").value) || 0,
+        angpaw: Number(document.getElementById("edit-emp-angpaw").value) || 0,
+        alEntitledOverride: Number(document.getElementById("edit-emp-al-entitled").value) || 0,
+        alTaken: Number(document.getElementById("edit-emp-al-taken").value) || 0,
+        elTaken: Number(document.getElementById("edit-emp-el-taken").value) || 0,
+        mcTaken: Number(document.getElementById("edit-emp-mc-taken").value) || 0,
+        taxStatus: document.getElementById("edit-emp-tax-status").value,
+        advanceDed: Number(document.getElementById("edit-emp-advance").value) || 0,
+        otherDed: Number(document.getElementById("edit-emp-other-ded").value) || 0,
+        pcbManual: document.getElementById("edit-emp-pcb-manual").value,
+        epfFull: document.getElementById("edit-emp-epf-11").checked
+      };
+    }
+
+    window.recalcModalPreview = function () {
+      const tempEmp = getModalFormObject();
+      const calc = calculateEmployeePayroll(tempEmp);
+      document.getElementById("prev-hrp").textContent = formatRM(calc.hrp);
+      document.getElementById("prev-ot").textContent = formatRM(calc.totalOTPay);
+      document.getElementById("prev-gross").textContent = formatRM(calc.grossPay);
+      document.getElementById("prev-ded").textContent = `-${formatRM(calc.totalDeductions)}`;
+      document.getElementById("prev-net").textContent = formatRM(calc.netPay);
+    };
+
+    window.saveEmployeeForm = function (event) {
+      event.preventDefault();
+      const updated = getModalFormObject();
+      const existingIndex = window.employees.findIndex(e => e.id === updated.id);
+      if (existingIndex >= 0) {
+        window.employees[existingIndex] = updated;
+        window.showToast(`Rekod gaji ${updated.name} berjaya dikemas kini.`, "success");
+      } else {
+        window.employees.unshift(updated);
+        window.showToast(`Pekerja baharu ${updated.name} berjaya ditambah.`, "success");
+      }
+      window.saveLocalState(true);
+      closeEmployeeModal();
+      window.refreshAllUI();
+    };
+
+    window.deleteCurrentEmployee = function () {
+      const id = document.getElementById("edit-emp-id").value;
+      const idx = window.employees.findIndex(e => e.id === id);
+      if (idx >= 0) {
+        const name = window.employees[idx].name;
+        window.employees.splice(idx, 1);
+        window.saveLocalState(true);
+        closeEmployeeModal();
+        window.refreshAllUI();
+        window.showToast(`Rekod ${name} telah dipadam.`, "warning");
+      }
+    };
+
+    // ===================================================================== -->
+    // TETAPAN POLISI & AKTA (TAB 5)                                         -->
+    // ===================================================================== -->
+    function populateSettingsForm() {
+      const s = window.settings;
+      document.getElementById("set-min-wage").value = s.minWage;
+      document.getElementById("set-orp-days").value = s.orpDays;
+      document.getElementById("set-hrp-hours").value = s.hrpHours;
+      document.getElementById("set-ot-normal").value = s.otNormal;
+      document.getElementById("set-ot-rest").value = s.otRest;
+      document.getElementById("set-ot-ph").value = s.otPublic;
+      document.getElementById("set-epf-emp").value = s.epfEmployeeRate;
+      document.getElementById("set-epf-empr-low").value = s.epfEmployerLow;
+      document.getElementById("set-epf-empr-high").value = s.epfEmployerHigh;
+      document.getElementById("set-epf-foreign").value = s.epfForeignRate;
+      document.getElementById("set-socso-ceiling").value = s.socsoCeiling;
+      document.getElementById("set-hrdf-rate").value = s.hrdfRate;
+      document.getElementById("set-socso-24h").checked = s.socso24HourActive;
+      document.getElementById("set-al-policy").value = s.alPolicy;
+    }
+
+    window.saveSettingsFromForm = function () {
+      window.settings = {
+        minWage: Number(document.getElementById("set-min-wage").value) || 1700,
+        orpDays: Number(document.getElementById("set-orp-days").value) || 26,
+        hrpHours: Number(document.getElementById("set-hrp-hours").value) || 8,
+        otNormal: Number(document.getElementById("set-ot-normal").value) || 1.5,
+        otRest: Number(document.getElementById("set-ot-rest").value) || 2.0,
+        otPublic: Number(document.getElementById("set-ot-ph").value) || 3.0,
+        epfEmployeeRate: Number(document.getElementById("set-epf-emp").value) || 11.0,
+        epfEmployerLow: Number(document.getElementById("set-epf-empr-low").value) || 13.0,
+        epfEmployerHigh: Number(document.getElementById("set-epf-empr-high").value) || 12.0,
+        epfForeignRate: Number(document.getElementById("set-epf-foreign").value) || 2.0,
+        socsoCeiling: Number(document.getElementById("set-socso-ceiling").value) || 6000,
+        hrdfRate: Number(document.getElementById("set-hrdf-rate").value) || 1.0,
+        socso24HourActive: document.getElementById("set-socso-24h").checked,
+        alPolicy: document.getElementById("set-al-policy").value
+      };
+      window.saveLocalState(true);
+      window.refreshAllUI();
+      window.showToast("Tetapan Polisi & Akta Kerja berjaya disimpan dan dikira semula.", "success");
+    };
+
+    window.resetDefaultSettings = function () {
+      window.settings = { ...window.DEFAULT_SETTINGS };
+      window.saveLocalState(true);
+      window.refreshAllUI();
+      window.showToast("Tetapan dikembalikan kepada piawaian Akta Kerja 2025/2026 (RM 1,700).", "info");
+    };
+
+    // ===================================================================== -->
+    // EKSPORT CSV (BANK / PAYROLL & BERKANUN)                               -->
+    // ===================================================================== -->
+    function downloadCSV(filename, rows) {
+      const csvContent = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.exportPayrollCSV = function () {
+      const y = document.getElementById("payroll-year").value;
+      const m = document.getElementById("payroll-month").value;
+      const rows = [[
+        "ID Pekerja", "Kategori", "Nama Penuh", "No IC/Pasport", "Warganegara", "Umur", "Tarikh Mula",
+        "Bahagian/Jawatan", "No Telefon", "Catatan", "Jenis Gaji",
+        "Gaji Pokok/Upah (RM)", "Jumlah OT (RM)", "Elaun & Lain (RM)", "Gaji Kasar (RM)",
+        "EPF Pekerja", "SOCSO 24J Pekerja", "EIS Pekerja", "PCB LHDN", "Potongan Lain",
+        "Gaji Bersih (RM)", "EPF Majikan", "SOCSO Majikan", "EIS Majikan", "HRDF Majikan", "Baki AL", "Baki MC"
+      ]];
+
+      window.employees.forEach(emp => {
+        const c = calculateEmployeePayroll(emp);
+        rows.push([
+          emp.code, emp.category, emp.name, emp.ic, emp.nationality, emp.age, emp.joinDate,
+          emp.position, emp.phone, emp.note, emp.payType,
+          c.netEarnedBasic.toFixed(2), c.totalOTPay.toFixed(2),
+          (c.allowance + c.commission + c.bonus + c.encashAlPay + c.angpaw).toFixed(2),
+          c.grossPay.toFixed(2), c.epfEmp.toFixed(2), c.socsoEmp.toFixed(2), c.eisEmp.toFixed(2),
+          c.pcb.toFixed(2), (c.advanceDed + c.otherDed).toFixed(2), c.netPay.toFixed(2),
+          c.epfEmpr.toFixed(2), c.socsoEmpr.toFixed(2), c.eisEmpr.toFixed(2), c.hrdfEmpr.toFixed(2),
+          c.leaveInfo.alBalance, c.leaveInfo.mcBalance
+        ]);
+      });
+
+      downloadCSV(`SCK_Wooden_Payroll_${y}_${m}.csv`, rows);
+      window.showToast("Fail CSV Payroll & Pindahan Bank berjaya dimuat turun.", "success");
+    };
+
+    window.exportStatutoryCSV = function () {
+      const y = document.getElementById("payroll-year").value;
+      const m = document.getElementById("payroll-month").value;
+      const rows = [[
+        "ID Pekerja", "Nama", "No IC/Pasport", "Warganegara", "Subjek EPF", "EPF Pekerja", "EPF Majikan",
+        "Subjek SOCSO/EIS", "SOCSO 24J Pekerja", "SOCSO 24J Majikan", "EIS Pekerja", "EIS Majikan",
+        "PCB LHDN", "Subjek HRDF", "HRDF Majikan (1%)"
+      ]];
+
+      window.employees.forEach(emp => {
+        const c = calculateEmployeePayroll(emp);
+        rows.push([
+          emp.code, emp.name, emp.ic, emp.nationality, c.epfSubject.toFixed(2), c.epfEmp.toFixed(2), c.epfEmpr.toFixed(2),
+          c.socsoEisSubject.toFixed(2), c.socsoEmp.toFixed(2), c.socsoEmpr.toFixed(2),
+          c.eisEmp.toFixed(2), c.eisEmpr.toFixed(2), c.pcb.toFixed(2), c.hrdfSubject.toFixed(2), c.hrdfEmpr.toFixed(2)
+        ]);
+      });
+
+      downloadCSV(`SCK_Wooden_Caruman_Berkanun_${y}_${m}.csv`, rows);
+      window.showToast("Laporan Caruman Berkanun (KWSP/PERKESO/EIS/PCB/HRDF) dimuat turun.", "success");
+    };
+
+    // ===================================================================== -->
+    // NAVIGASI TAB & MOD GELAP / CERAH                                      -->
+    // ===================================================================== -->
+    window.switchTab = function (tabName) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("bg-emerald-600", "text-white", "shadow-sm");
+        btn.classList.add("text-slate-600", "dark:text-slate-300", "hover:bg-slate-100", "dark:hover:bg-slate-800");
+      });
+
+      const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+      activeBtn.classList.add("bg-emerald-600", "text-white", "shadow-sm");
+      activeBtn.classList.remove("text-slate-600", "dark:text-slate-300", "hover:bg-slate-100", "dark:hover:bg-slate-800");
+
+      if (tabName === "payslip") renderPayslipPreview();
+      if (window.lucide) lucide.createIcons();
+    };
+
+    window.toggleTheme = function () {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle("dark");
+      localStorage.setItem("sck_theme", isDark ? "dark" : "light");
+    };
+
+    // Inisialisasi Aplikasi
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("sck_theme");
+      if (savedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      }
+      loadLocalState();
+      window.refreshAllUI();
+    });
+  </script>
+</body>
+</html>
