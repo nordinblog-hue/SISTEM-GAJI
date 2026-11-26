@@ -2412,14 +2412,12 @@
                   <div>EPF</div>
                   <div>SOCSO (24H)</div>
                   <div>EIS</div>
-                  ${calc.hrdfEmpr > 0 ? `<div>HRDF (1%)</div>` : ``}
                 </td>
                 <td style="padding:3px 6px; font-size:9.5px; text-align:right; vertical-align:top;">
                   <div style="margin-bottom:1px;">&nbsp;</div>
                   <div>${formatNum(calc.epfEmpr)}</div>
                   <div>${formatNum(calc.socsoEmpr)}</div>
                   <div>${formatNum(calc.eisEmpr)}</div>
-                  ${calc.hrdfEmpr > 0 ? `<div>${formatNum(calc.hrdfEmpr)}</div>` : ``}
                 </td>
               </tr>
             </tbody>
