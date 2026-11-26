@@ -233,7 +233,7 @@
               </span>
             </div>
             <p id="header-company-subtitle" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-              NAMA SYARIKAT ANDA SDN BHD • Tetapkan maklumat syarikat di Tab Tetapan
+              NAMA SYARIKAT ANDA SDN BHD • <button type="button" onclick="switchTab('settings')" class="underline font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-600">Tetapkan maklumat syarikat di Tab Tetapan</button>
             </p>
           </div>
         </div>
@@ -297,26 +297,26 @@
 
       <!-- Navigation Tabs -->
       <nav class="flex gap-1.5 overflow-x-auto pb-2 pt-1" aria-label="Menu Utama">
-        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn active flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-emerald-600 text-white shadow-sm">
+        <button type="button" onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn active flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition bg-emerald-600 text-white shadow-sm">
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
           <span>1. Dashboard &amp; Ringkasan</span>
         </button>
-        <button onclick="switchTab('employees')" id="tab-btn-employees" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button type="button" onclick="switchTab('employees')" id="tab-btn-employees" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="users" class="w-4 h-4"></i>
           <span>2. Senarai &amp; Edit Pekerja</span>
           <span id="badge-emp-count" class="px-1.5 py-0.5 text-[10px] rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200">0</span>
         </button>
-        <button onclick="switchTab('payslip')" id="tab-btn-payslip" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button type="button" onclick="switchTab('payslip')" id="tab-btn-payslip" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="printer" class="w-4 h-4"></i>
           <span>3. Slip Gaji A4 (2-Dalam-1) &amp; WhatsApp</span>
         </button>
-        <button onclick="switchTab('statutory')" id="tab-btn-statutory" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button type="button" onclick="switchTab('statutory')" id="tab-btn-statutory" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="landmark" class="w-4 h-4"></i>
-          <span>4. Laporan Berkanun (EPF/SOCSO 24J/EIS/PCB/HRDF)</span>
+          <span>4. Laporan Berkanun</span>
         </button>
-        <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button type="button" onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <i data-lucide="sliders" class="w-4 h-4"></i>
-          <span>5. Tetapan Polisi &amp; Akta</span>
+          <span>5. Tetapan Syarikat &amp; Polisi</span>
         </button>
       </nav>
     </div>
@@ -827,14 +827,14 @@
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
-            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Tetapan Parameter Akta Kerja 1955 &amp; Polisi SCK Wooden</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Sebarang perubahan kadar akan mengira semula gaji semua pekerja aktif secara serta-merta.</p>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Tetapan Syarikat, Parameter Akta Kerja 1955 &amp; Polisi</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Masukkan nama syarikat anda di bahagian #3 dan klik Simpan &amp; Kira Semula.</p>
           </div>
           <div class="flex gap-2">
-            <button onclick="resetDefaultSettings()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">
+            <button type="button" onclick="resetDefaultSettings()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">
               Set Semula Lalai (2025/2026)
             </button>
-            <button onclick="saveSettingsFromForm()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
+            <button type="button" onclick="saveSettingsFromForm()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition">
               Simpan &amp; Kira Semula
             </button>
           </div>
@@ -853,7 +853,7 @@
                 <input type="number" step="0.01" id="set-daily-rate" class="w-full px-3 py-2 text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700" />
               </div>
             </div>
-            <p class="text-[11px] text-slate-500">Kadar Harian SCK Wooden: RM 65.40 / hari (26 hari = RM 1,700.40, melebihi wajib RM 1,700.00).</p>
+            <p class="text-[11px] text-slate-500">Kadar Harian Standard: RM 65.40 / hari (26 hari = RM 1,700.40, melebihi wajib RM 1,700.00).</p>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-semibold mb-1">Pembahagi Hari (ORP)</label>
@@ -919,32 +919,22 @@
           </div>
 
           <div class="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">3. Polisi Cuti Tahunan &amp; Sakit Kontrak</h3>
-            <div>
-              <label class="block text-xs font-semibold mb-1">Mod Kelayakan Cuti Tahunan (AL)</label>
-              <select id="set-al-policy" class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
-                <option value="CONTRACT">Kontrak SCK (&lt;1thn: 0 | 1-2: 8 | 2-5: 12 | ≥5: 16)</option>
-                <option value="ACT1955">Akta Kerja 1955 (&lt;2thn: 8 | 2-5: 12 | ≥5: 16)</option>
-              </select>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">3. Maklumat Syarikat &amp; Polisi Cuti</h3>
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+              <div class="font-bold text-slate-800 dark:text-slate-200">Maklumat Syarikat (Dipaparkan Pada Slip Gaji &amp; Laporan):</div>
+              <div>
+                <label class="block text-[11px] font-semibold mb-1">Nama Syarikat</label>
+                <input type="text" id="set-company-name" placeholder="Cth: NAMA SYARIKAT SDN BHD" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold mb-1">No. Pendaftaran Syarikat (SSM)</label>
+                <input type="text" id="set-company-reg" placeholder="Cth: 202401000000 (123456-X)" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold mb-1">Alamat Syarikat</label>
+                <input type="text" id="set-company-address" placeholder="Alamat penuh pejabat / kilang" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+              </div>
             </div>
-            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
-            <div class="font-bold text-slate-800 dark:text-slate-200">Maklumat Syarikat (Dipaparkan Pada Slip Gaji &amp; Laporan):</div>
-            <div>
-              <label class="block text-[11px] font-semibold mb-1">Nama Syarikat</label>
-              <input type="text" id="set-company-name" placeholder="Cth: NAMA SYARIKAT SDN BHD" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold mb-1">No. Pendaftaran Syarikat (SSM)</label>
-              <input type="text" id="set-company-reg" placeholder="Cth: 202401000000 (123456-X)" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold mb-1">Alamat Syarikat</label>
-              <input type="text" id="set-company-address" placeholder="Alamat penuh pejabat / kilang" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
-            </div>
-          </div>
-
-          <div class="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">3. Polisi Cuti Tahunan &amp; Sakit</h3>
             <div>
               <label class="block text-xs font-semibold mb-1">Mod Kelayakan Cuti Tahunan (AL)</label>
               <select id="set-al-policy" class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
@@ -2744,6 +2734,9 @@
             </div>
           </div>
         </div>
+      `;
+    }
+
     // 2. FORMAT SLIP GAJI BULANAN (MONTHLY STAFF)
     function buildMonthlyOfficialSlipHTML(emp, calc, cycle, copyBadgeText) {
       const compName = (window.settings.companyName || "NAMA SYARIKAT ANDA SDN BHD").toUpperCase();
@@ -3409,10 +3402,6 @@
       window.saveLocalState(true);
       window.refreshAllUI();
       window.showToast("Tetapan Syarikat & Polisi Akta Kerja berjaya disimpan dan dikira semula.", "success");
-    };
-      window.saveLocalState(true);
-      window.refreshAllUI();
-      window.showToast("Tetapan Polisi & Akta Kerja berjaya disimpan dan dikira semula.", "success");
     };
 
     window.resetDefaultSettings = function () {
