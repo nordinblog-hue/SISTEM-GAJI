@@ -2,14 +2,16 @@
 <html lang="ms" class="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Gaji & Pengurusan Payroll — SCK Wooden Industries Sdn Bhd</title>
+
+  <!-- PWA & iOS Web App Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="SCK GAJI" />
   <meta name="theme-color" content="#065f46" />
-  <title>Sistem Gaji &amp; Pengurusan Payroll — SCK Wooden Industries Sdn Bhd</title>
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -17,8 +19,7 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+            sans: ['Inter', 'sans-serif']
           }
         }
       }
@@ -466,7 +467,7 @@
                 <span class="font-bold text-blue-600 dark:text-blue-400">Jadual Ketiga 24J (Siling RM6,000)</span>
               </li>
               <li class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
-                <span class="text-slate-600 dark:text-slate-300 font-medium">KWSP Tempatan / Asing:</span>
+                <span class="text-slate-600 dark:text-slate-300 font-medium">KWSP (Jadual Ketiga Selang RM20):</span>
                 <span class="font-bold text-slate-800 dark:text-slate-200">11%/13% (Lokal) • 2%/2% (Asing)</span>
               </li>
               <li class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
@@ -611,7 +612,7 @@
       <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl px-4 py-2.5 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between gap-2 no-print">
         <div class="flex items-center gap-2">
           <i data-lucide="scissors" class="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0"></i>
-          <span>Format Cetakan Rasmi A4 Portrait: <strong>Bahagian Atas = Salinan Majikan (Employer Copy)</strong> &amp; <strong>Bahagian Bawah = Salinan Pekerja (Employee Copy)</strong> dalam 1 helaian A4.</span>
+          <span>Format Cetakan Rasmi A4 Portrait: <strong>Bahagian Atas = Salinan Majikan (Employer Copy)</strong> &amp; <strong>Bahagian Bawah = Salinan Pekerja (Employee Copy)</strong> dalam 1 helaian A4 (Format Automatik mengikut Gaji Harian atau Gaji Bulanan).</span>
         </div>
       </div>
 
@@ -641,7 +642,7 @@
     <section id="tab-statutory" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div class="text-xs font-bold text-slate-500 dark:text-slate-400">KWSP (EPF)</div>
+          <div class="text-xs font-bold text-slate-500 dark:text-slate-400">KWSP (EPF Jadual Ketiga)</div>
           <div id="stat-epf-total" class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">RM 0.00</div>
           <div id="stat-epf-split" class="text-[11px] text-slate-500 mt-1">Pekerja: RM 0 | Majikan: RM 0</div>
         </div>
@@ -671,7 +672,7 @@
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div class="p-4 border-b border-slate-200 dark:border-slate-800">
           <h3 class="text-sm font-bold text-slate-900 dark:text-white">Jadual Kelayakan Potongan &amp; Caruman Berkanun Malaysia</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Matriks pengiraan automatik mengikut kategori imbuhan pekerja (Jadual Ketiga PERKESO Siling RM 6,000).</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Matriks pengiraan automatik mengikut Jadual Ketiga KWSP (selang RM 20 bagi gaji ≤ RM 5,000) dan Jadual Ketiga PERKESO (Siling RM 6,000).</p>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
@@ -1300,7 +1301,7 @@
   </script>
 
   <!-- ===================================================================== -->
-  <!-- ENJIN PAYROLL MALAYSIA (JADUAL KETIGA PERKESO TEPAT, KITARAN 26HB-25HB) -->
+  <!-- ENJIN PAYROLL MALAYSIA (JADUAL KETIGA KWSP & PERKESO, KITARAN 26-25)  -->
   <!-- ===================================================================== -->
   <script>
     // Tiada data pekerja ditanam secara statik (selamat untuk repositori awam GitHub)
@@ -1472,9 +1473,6 @@
     }
 
     // JADUAL KETIGA RASMI PERKESO (AKTA KESELAMATAN SOSIAL PEKERJA 1969) & SIP (AKTA 800) - SILING RM 6,000.00
-    // Jadual kurungan rasmi yang tepat mengikut selang RM 100:
-    // - Julat Melebihi RM 1,700 hingga RM 1,800 (cth: RM 1,700.40) -> Pekerja RM 21.65 | Majikan RM 30.35 | EIS RM 3.50 / RM 3.50
-    // - Julat Melebihi RM 2,200 hingga RM 2,300 (cth: RM 2,300.00) -> Pekerja RM 28.10 | Majikan RM 39.35 | EIS RM 4.50 / RM 4.50
     const OFFICIAL_SOCSO_EIS_TABLE = [
       { max: 30, socsoEmp24: 0.25, socsoEmpStd: 0.10, socsoEmpr: 0.40, socsoEmpr60: 0.30, eis: 0.05 },
       { max: 50, socsoEmp24: 0.50, socsoEmpStd: 0.20, socsoEmpr: 0.70, socsoEmpr60: 0.50, eis: 0.10 },
@@ -1552,7 +1550,6 @@
         return { socsoEmp: 0, socsoEmpr: 0, eisEmp: 0, eisEmpr: 0 };
       }
 
-      // Cari kurungan rasmi dalam Jadual Ketiga PERKESO
       let row = OFFICIAL_SOCSO_EIS_TABLE[OFFICIAL_SOCSO_EIS_TABLE.length - 1];
       for (let i = 0; i < OFFICIAL_SOCSO_EIS_TABLE.length; i++) {
         if (cappedWage <= OFFICIAL_SOCSO_EIS_TABLE[i].max) {
@@ -1623,7 +1620,7 @@
       return Number((annualTax / 12).toFixed(2));
     }
 
-    // ENJIN PENGIRAAN GAJI LENGKAP (Gaji Harian & Gaji Bulanan)
+    // ENJIN PENGIRAAN GAJI LENGKAP (Gaji Harian & Gaji Bulanan + Jadual Ketiga KWSP & PERKESO)
     function calculateEmployeePayroll(emp) {
       const s = window.settings;
       const basicInput = Number(emp.basicSalary) || 0;
@@ -1646,12 +1643,7 @@
 
       const hrp = orp / (Number(s.hrpHours) || 8);
 
-      // Kadar OT Sejam mengikut Jadual Kilang SCK Wooden:
-      // Khas untuk Gaji Basic RM 1,700.00 (atau kadar harian RM 65.40):
-      // - Isnin & Selasa (8.0 jam/hari): RM 12.26 / jam
-      // - Rabu, Khamis & Sabtu (7.5 jam/hari): RM 13.08 / jam
-      // - Jumaat (6.5 jam/hari): RM 15.09 / jam
-      // Bagi gaji pokok lain, kadar dikira secara automatik berdasarkan ORP individu masing-masing.
+      // Kadar OT Sejam mengikut Jadual Kilang SCK Wooden
       const otNormalMult = Number(s.otNormal) || 1.5;
       const isBase1700Standard =
         (emp.payType === "MONTHLY" && Math.abs(basicInput - 1700) < 0.01) ||
@@ -1663,7 +1655,6 @@
       const rateOt20 = (orp / 8.0) * (Number(s.otRest) || 2.0);
       const rateOt30 = (orp / 8.0) * (Number(s.otPublic) || 3.0);
 
-      // Kerja Lebih Masa (OT)
       const otMonTueHours = Number(emp.otMonTueHours ?? emp.ot15Hours) || 0;
       const otWedThuSatHours = Number(emp.otWedThuSatHours) || 0;
       const otFriHours = Number(emp.otFriHours) || 0;
@@ -1678,7 +1669,6 @@
       const totalOTPay = Number((otMonTuePay + otWedThuSatPay + otFriPay + ot20Pay + ot30Pay).toFixed(2));
       const totalOTHours = otMonTueHours + otWedThuSatHours + otFriHours + ot20Hours + ot30Hours;
 
-      // Gaji pokok bersih selepas UPL & imbuhan tambahan
       const netEarnedBasic = Math.max(0, Number((earnedBasic - uplDeduction).toFixed(2)));
       const allowance = Number(emp.allowance) || 0;
       const commission = Number(emp.commission) || 0;
@@ -1696,7 +1686,7 @@
       const hrdfSubject = netEarnedBasic + allowance + encashAlPay;
       const pcbSubject = grossPay;
 
-      // KWSP (EPF)
+      // KWSP (EPF) — Mengikut Jadual Ketiga Rasmi KWSP (Selang RM 20 bagi gaji <= RM 5,000)
       let epfEmp = 0;
       let epfEmpr = 0;
       const isForeign = !isLocalCitizen(emp);
@@ -1709,14 +1699,19 @@
           epfEmpr = Math.ceil(epfSubject * fRate);
         } else if (isSenior) {
           epfEmp = 0;
-          epfEmpr = Math.ceil(epfSubject * 0.04);
+          const bracketWage60 = epfSubject <= 5000 ? Math.ceil(epfSubject / 20) * 20 : epfSubject;
+          epfEmpr = Math.ceil(bracketWage60 * 0.04);
         } else {
+          // Jadual Ketiga KWSP: Untuk gaji <= RM 5,000, caruman dikira berdasarkan had atas selang RM 20
+          // Cth: RM 1,635.00 -> kurungan RM 1,620.01–RM 1,640.00 -> 11% x 1,640 = RM 181 | 13% x 1,640 = RM 214
+          // Cth: RM 2,300.00 -> kurungan RM 2,280.01–RM 2,300.00 -> 11% x 2,300 = RM 253 | 13% x 2,300 = RM 299
+          const bracketWage = epfSubject <= 5000 ? Math.ceil(epfSubject / 20) * 20 : epfSubject;
           const empRate = emp.epfFull ? (Number(s.epfEmployeeRate) || 11.0) / 100 : 0.09;
           const emprRate = epfSubject <= 5000
             ? (Number(s.epfEmployerLow) || 13.0) / 100
             : (Number(s.epfEmployerHigh) || 12.0) / 100;
-          epfEmp = Math.ceil(epfSubject * empRate);
-          epfEmpr = Math.ceil(epfSubject * emprRate);
+          epfEmp = Math.ceil(bracketWage * empRate);
+          epfEmpr = Math.ceil(bracketWage * emprRate);
         }
       }
 
@@ -1898,7 +1893,6 @@
       window.showToast(`${count} pekerja telah diselaraskan ke paras minimum (RM ${minDaily.toFixed(2)}/hari atau ${formatRM(minW)}/bln).`, "success");
     };
 
-    // Quick Inline Update directly from Employee Table
     window.quickUpdateEmployeeField = function (empId, field, rawValue) {
       const emp = window.employees.find(e => e.id === empId);
       if (!emp) return;
@@ -1919,7 +1913,7 @@
         "ID Pekerja", "Kategori", "Nama Penuh", "No IC/Pasport", "Warganegara", "Umur",
         "Tarikh Lahir (YYYY-MM-DD)", "Tarikh Mula (YYYY-MM-DD)", "Jawatan", "Bank A/C",
         "No Telefon", "Catatan", "Jenis Gaji (DAILY/MONTHLY)", "Kadar/Pokok (RM)",
-        "Hari Kerja", "OT 1.5x (Jam)", "OT 2.0x (Jam)", "OT 3.0x (Jam)", "Elaun (RM)",
+        "Hari Kerja", "OT Isnin-Selasa (Jam)", "OT Ahad 2.0x (Jam)", "OT Cuti Am 3.0x (Jam)", "Elaun (RM)",
         "Potongan Advance (RM)", "Potongan Lain (RM)"
       ];
       const sampleRow = [
@@ -2340,6 +2334,331 @@
     };
 
     function buildOfficialSlipHTML(emp, calc, cycle, copyBadgeText) {
+      if (emp.payType === "DAILY") {
+        return buildDailyOfficialSlipHTML(emp, calc, cycle, copyBadgeText);
+      }
+      return buildMonthlyOfficialSlipHTML(emp, calc, cycle, copyBadgeText);
+    }
+
+    // Grafik Vektor SVG Logo Rasmi SCK Wooden Industries Sdn Bhd
+    function getSckLogoSVG(heightPx = 38) {
+      return `
+        <svg height="${heightPx}" viewBox="0 0 360 155" xmlns="http://www.w3.org/2000/svg" style="display:block; width:auto; flex-shrink:0;">
+          <g fill="none" stroke="#b9975b" stroke-width="2.6">
+            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-48 118 76)" />
+            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-40 118 76)" />
+            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-32 118 76)" />
+            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-24 118 76)" />
+            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-16 118 76)" />
+            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-8 118 76)" />
+          </g>
+          <rect x="46" y="4" width="76" height="76" rx="9" fill="#b9975b" />
+          <text x="136" y="75" fill="#b9975b" font-family="Arial Black, Impact, Arial, sans-serif" font-weight="900" font-size="78" letter-spacing="4">SCK</text>
+          <rect x="136" y="88" width="216" height="27" fill="#b9975b" />
+          <text x="244" y="107" fill="#ffffff" font-family="Georgia, 'Times New Roman', serif" font-size="17" text-anchor="middle">Wooden Industries Sdn Bhd</text>
+          <text x="244" y="135" fill="#b9975b" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">(Company No.528956-D)</text>
+        </svg>
+      `;
+    }
+
+    // 1. FORMAT SLIP GAJI HARIAN (DAILY WAGES — SEPERTI SLIP OPERASI / AZILA BINTI AWANG)
+    function buildDailyOfficialSlipHTML(emp, calc, cycle, copyBadgeText) {
+      const deptLabel = emp.category && emp.category.startsWith("GENERAL") ? "OPERATION" : (emp.category || "OPERATION");
+      const otMonTueH = Number(emp.otMonTueHours ?? emp.ot15Hours) || 0;
+      const otWedThuSatH = Number(emp.otWedThuSatHours) || 0;
+      const otFriH = Number(emp.otFriHours) || 0;
+      const otRestH = Number(emp.ot20Hours) || 0;
+      const otPhH = Number(emp.ot30Hours) || 0;
+
+      const otDetailRows = [];
+      if (otWedThuSatH > 0 || calc.otWedThuSatPay > 0) {
+        otDetailRows.push({
+          label: "Default Overtime",
+          units: formatNum(otWedThuSatH),
+          rate: "1.00",
+          pRate: formatNum(calc.rateOtWedThuSat),
+          amount: formatNum(calc.otWedThuSatPay)
+        });
+      }
+      if (otMonTueH > 0 || calc.otMonTuePay > 0) {
+        otDetailRows.push({
+          label: "Default Overtime",
+          units: formatNum(otMonTueH),
+          rate: "1.00",
+          pRate: formatNum(calc.rateOtMonTue),
+          amount: formatNum(calc.otMonTuePay)
+        });
+      }
+      if (otFriH > 0 || calc.otFriPay > 0) {
+        otDetailRows.push({
+          label: "Default Overtime",
+          units: formatNum(otFriH),
+          rate: "1.00",
+          pRate: formatNum(calc.rateOtFri),
+          amount: formatNum(calc.otFriPay)
+        });
+      }
+      if (otRestH > 0 || calc.ot20Pay > 0) {
+        otDetailRows.push({
+          label: "Overtime (2.0x)",
+          units: formatNum(otRestH),
+          rate: "2.00",
+          pRate: formatNum(calc.rateOt20),
+          amount: formatNum(calc.ot20Pay)
+        });
+      }
+      if (otPhH > 0 || calc.ot30Pay > 0) {
+        otDetailRows.push({
+          label: "Overtime (3.0x)",
+          units: formatNum(otPhH),
+          rate: "3.00",
+          pRate: formatNum(calc.rateOt30),
+          amount: formatNum(calc.ot30Pay)
+        });
+      }
+
+      let otRightHTML = "";
+      if (otDetailRows.length > 0) {
+        otRightHTML = `
+          <table style="width:100%; border-collapse:collapse; margin-top:4px; font-size:9px;">
+            <thead>
+              <tr>
+                <th style="text-align:left; border-bottom:1px solid #000; padding:1px 2px;">Overtime</th>
+                <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Units</th>
+                <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Rate</th>
+                <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">P.Rate</th>
+                <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${otDetailRows.map(r => `
+                <tr>
+                  <td style="padding:1px 2px;">${r.label}</td>
+                  <td style="text-align:right; padding:1px 2px;">${r.units}</td>
+                  <td style="text-align:right; padding:1px 2px;">${r.rate}</td>
+                  <td style="text-align:right; padding:1px 2px;">${r.pRate}</td>
+                  <td style="text-align:right; padding:1px 2px;">${r.amount}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      const leftEarnings = [
+        { label: "Wages", amount: formatNum(calc.netEarnedBasic) }
+      ];
+      if (calc.totalOTPay > 0 || calc.totalOTHours > 0) {
+        leftEarnings.push({ label: "Overtime", amount: formatNum(calc.totalOTPay) });
+      }
+      if (calc.allowance > 0) leftEarnings.push({ label: "Allowance", amount: formatNum(calc.allowance) });
+      if (calc.commission + calc.reward > 0) leftEarnings.push({ label: "Commission / Incentive", amount: formatNum(calc.commission + calc.reward) });
+      if (calc.bonus > 0) leftEarnings.push({ label: "Bonus", amount: formatNum(calc.bonus) });
+      if (calc.encashAlPay > 0) leftEarnings.push({ label: "Unutilized Leave", amount: formatNum(calc.encashAlPay) });
+      if (calc.angpaw > 0) leftEarnings.push({ label: "Angpaw", amount: formatNum(calc.angpaw) });
+
+      const midDeductions = [];
+      if (calc.epfEmp > 0) midDeductions.push({ label: "EPF Employee", amount: `-${formatNum(calc.epfEmp)}` });
+      if (calc.socsoEmp > 0) midDeductions.push({ label: "SOCSO Employee", amount: `-${formatNum(calc.socsoEmp)}` });
+      if (calc.eisEmp > 0) midDeductions.push({ label: "EIS Employee", amount: `-${formatNum(calc.eisEmp)}` });
+      if (calc.pcb > 0) midDeductions.push({ label: "PCB (LHDN)", amount: `-${formatNum(calc.pcb)}` });
+      if (calc.advanceDed > 0) midDeductions.push({ label: "Advance / Loan", amount: `-${formatNum(calc.advanceDed)}` });
+      if (calc.otherDed > 0) midDeductions.push({ label: "Other Deduction", amount: `-${formatNum(calc.otherDed)}` });
+
+      const cleanIcDigits = String(emp.ic || "").replace(/\D/g, "");
+      const mtdAl = Number(emp.alTaken) || 0;
+      const ytdAl = (Number(emp.alTaken) || 0) + (Number(emp.elTaken) || 0) + (Number(emp.encashAlDays) || 0);
+      const mtdMc = Number(emp.mcTaken) || 0;
+
+      return `
+        <div class="sck-slip-box">
+          <!-- Header Syarikat & Maklumat Pekerja Harian -->
+          <div class="flex justify-between items-start mb-1 gap-2">
+            <div style="flex:1;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+                ${getSckLogoSVG(36)}
+                <div>
+                  <div style="font-size:13px; font-weight:700; line-height:1.15;">
+                    SCK WOODEN INDUSTRIES SDN BHD <span style="font-size:9px; font-weight:400;">(200001026349 (528956-D))</span>
+                  </div>
+                  <div style="font-size:8.5px; color:#222;">
+                    Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-0.5" style="font-size:9.5px; line-height:1.35;">
+                <div>
+                  <div><strong>NAME :</strong> ${emp.name} (I/C NO : ${emp.ic})</div>
+                  <div><strong>DEPT :</strong> ${deptLabel}</div>
+                  <div><strong>BANK A/C NO :</strong> ${emp.bankAcc || "-"}</div>
+                </div>
+                <div>
+                  <div><strong>EMPLOYEE NO :</strong> ${emp.code} &nbsp;&nbsp; <strong>SOCSO :</strong> ${cleanIcDigits || emp.ic}</div>
+                  <div><strong>EPF :</strong> ${emp.epfNo || "-"} &nbsp;&nbsp; <strong>DATE JOINED :</strong> ${formatDateShort(emp.joinDate)}</div>
+                  <div><strong>CUT-OFF :</strong> ${cycle.rangeTextBM}</div>
+                </div>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <div style="font-size:8.5px; font-weight:700; border:1px solid #000; padding:1px 5px; display:inline-block; margin-bottom:2px;">
+                ${copyBadgeText}
+              </div>
+              <div style="font-size:12.5px; font-weight:700; line-height:1.15;">Payslip For<br/>${cycle.monthShortEN} ${cycle.year}</div>
+            </div>
+          </div>
+
+          <!-- Jadual 3-Lajur Slip Gaji Harian -->
+          <table style="width:100%; border-collapse:collapse; border:1.5px solid #000; font-size:9.5px;">
+            <thead>
+              <tr>
+                <th style="width:30%; border:1.5px solid #000; padding:2px 5px; text-align:left;">Earnings</th>
+                <th style="width:10%; border:1.5px solid #000; padding:2px 5px; text-align:right;">RM</th>
+                <th style="width:20%; border:1.5px solid #000; padding:2px 5px; text-align:left;">Deductions</th>
+                <th style="width:10%; border:1.5px solid #000; padding:2px 5px; text-align:right;">RM</th>
+                <th style="width:30%; border:1.5px solid #000; padding:2px 5px; text-align:left;">Leave Type &amp; Overtime Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <!-- Lajur 1 & 2: Earnings + Jadual Unit x Rate -->
+                <td colspan="2" style="border:1.5px solid #000; padding:3px 5px; vertical-align:top; height:128px;">
+                  <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+                    <div>
+                      ${leftEarnings.map(item => `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:1.5px;">
+                          <span>${item.label}</span>
+                          <span>${item.amount}</span>
+                        </div>
+                      `).join("")}
+                    </div>
+                    <div style="margin-top:8px;">
+                      <table style="width:100%; border-collapse:collapse; font-size:9px;">
+                        <thead>
+                          <tr>
+                            <th style="text-align:left; border-bottom:1px solid #000; padding:1px 2px;">Wages</th>
+                            <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Unit</th>
+                            <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Rate</th>
+                            <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td style="padding:1px 2px;">Daily</td>
+                            <td style="text-align:right; padding:1px 2px;">${formatNum(emp.daysWorked)}</td>
+                            <td style="text-align:right; padding:1px 2px;">${formatNum(emp.basicSalary)}</td>
+                            <td style="text-align:right; padding:1px 2px;">${formatNum(calc.netEarnedBasic)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Lajur 3 & 4: Deductions -->
+                <td colspan="2" style="border:1.5px solid #000; padding:3px 5px; vertical-align:top;">
+                  ${midDeductions.map(item => `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1.5px;">
+                      <span>${item.label}</span>
+                      <span>${item.amount}</span>
+                    </div>
+                  `).join("")}
+                </td>
+
+                <!-- Lajur 5: Leave Type Table & Overtime Breakdown -->
+                <td rowspan="2" style="border:1.5px solid #000; padding:3px 5px; vertical-align:top;">
+                  <table style="width:100%; border-collapse:collapse; font-size:8.5px;">
+                    <thead>
+                      <tr>
+                        <th style="text-align:left; border-bottom:1px solid #000; padding:1px 2px;">Leave Type</th>
+                        <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">B/F</th>
+                        <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Entitle</th>
+                        <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">YTD</th>
+                        <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">MTD</th>
+                        <th style="text-align:right; border-bottom:1px solid #000; padding:1px 2px;">Bal.</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="padding:1px 2px;">Annual Leave</td>
+                        <td style="text-align:right; padding:1px 2px;">0.00</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(calc.leaveInfo.alEntitled)}</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(ytdAl)}</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(mtdAl)}</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(calc.leaveInfo.alBalance)}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:1px 2px;">Medical Leave</td>
+                        <td style="text-align:right; padding:1px 2px;">0.00</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(calc.leaveInfo.mcEntitled)}</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(mtdMc)}</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(mtdMc)}</td>
+                        <td style="text-align:right; padding:1px 2px;">${formatNum(calc.leaveInfo.mcBalance)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  ${otRightHTML}
+                </td>
+              </tr>
+
+              <!-- Baris Total Earnings & Total Deduction -->
+              <tr>
+                <td style="border:1.5px solid #000; padding:2px 5px; font-weight:700;">Total Earnings</td>
+                <td style="border:1.5px solid #000; padding:2px 5px; font-weight:700; text-align:right;">${formatNum(calc.grossPay)}</td>
+                <td style="border:1.5px solid #000; padding:2px 5px; font-weight:700;">Total Deduction</td>
+                <td style="border:1.5px solid #000; padding:2px 5px; font-weight:700; text-align:right;">-${formatNum(calc.totalDeductions)}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Jadual Bawah: PCB | EPF ee | EPF er | SOCSO ee | SOCSO er | EIS ee | EIS er -->
+          <table style="width:100%; border-collapse:collapse; border:1.5px solid #000; border-top:none; font-size:9px;">
+            <thead>
+              <tr>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">PCB</th>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">EPF ee</th>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">EPF er</th>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">SOCSO ee</th>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">SOCSO er</th>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">EIS ee</th>
+                <th style="border:1px solid #000; padding:1.5px 4px; text-align:right;">EIS er</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.pcb > 0 ? formatNum(calc.pcb) : "-"}</td>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.epfEmp > 0 ? formatNum(calc.epfEmp) : "-"}</td>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.epfEmpr > 0 ? formatNum(calc.epfEmpr) : "-"}</td>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.socsoEmp > 0 ? formatNum(calc.socsoEmp) : "-"}</td>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.socsoEmpr > 0 ? formatNum(calc.socsoEmpr) : "-"}</td>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.eisEmp > 0 ? formatNum(calc.eisEmp) : "-"}</td>
+                <td style="border:1px solid #000; padding:2px 4px; text-align:right;">${calc.eisEmpr > 0 ? formatNum(calc.eisEmpr) : "-"}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Kotak Net Pay & Tandatangan APPROVED BY / RECEIVED BY -->
+          <div class="flex flex-wrap justify-between items-end mt-2 gap-3" style="font-size:9.5px;">
+            <div style="border:1.5px solid #000; padding:3px 10px; font-weight:700; font-size:11.5px; display:inline-flex; gap:18px; align-items:center;">
+              <span>Net Pay</span>
+              <span>RM ${formatNum(calc.netPay)}</span>
+            </div>
+            <div class="flex gap-6 items-end">
+              <div>
+                <span>APPROVED BY : </span>
+                <span style="display:inline-block; width:125px; border-bottom:1px solid #000;">&nbsp;</span>
+              </div>
+              <div>
+                <span>RECEIVED BY : </span>
+                <span style="display:inline-block; width:125px; border-bottom:1px solid #000;">&nbsp;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. FORMAT SLIP GAJI BULANAN (MONTHLY STAFF — SEPERTI SLIP MOHAMAD NORDIN BIN MOHAMMED LOT)
+    function buildMonthlyOfficialSlipHTML(emp, calc, cycle, copyBadgeText) {
       const deptLabel = emp.category === "STAFF" ? "OFFICE STAFF" : emp.category;
       const basicLabel = emp.payType === "MONTHLY"
         ? "BASIC SALARY"
@@ -2348,8 +2667,41 @@
       const earningsRows = [
         { label: basicLabel, amount: formatNum(calc.netEarnedBasic) }
       ];
-      if (calc.totalOTPay > 0) {
-        earningsRows.push({ label: `OVERTIME (${calc.totalOTHours} HRS)`, amount: formatNum(calc.totalOTPay) });
+      const otMonTueH = Number(emp.otMonTueHours ?? emp.ot15Hours) || 0;
+      const otWedThuSatH = Number(emp.otWedThuSatHours) || 0;
+      const otFriH = Number(emp.otFriHours) || 0;
+      const otRestH = Number(emp.ot20Hours) || 0;
+      const otPhH = Number(emp.ot30Hours) || 0;
+
+      if (calc.otMonTuePay > 0 || otMonTueH > 0) {
+        earningsRows.push({
+          label: `OVERTIME (${otMonTueH} HRS)`,
+          amount: formatNum(calc.otMonTuePay)
+        });
+      }
+      if (calc.otWedThuSatPay > 0 || otWedThuSatH > 0) {
+        earningsRows.push({
+          label: `OVERTIME (${otWedThuSatH} HRS)`,
+          amount: formatNum(calc.otWedThuSatPay)
+        });
+      }
+      if (calc.otFriPay > 0 || otFriH > 0) {
+        earningsRows.push({
+          label: `OVERTIME (${otFriH} HRS)`,
+          amount: formatNum(calc.otFriPay)
+        });
+      }
+      if (calc.ot20Pay > 0 || otRestH > 0) {
+        earningsRows.push({
+          label: `OVERTIME (${otRestH} HRS)`,
+          amount: formatNum(calc.ot20Pay)
+        });
+      }
+      if (calc.ot30Pay > 0 || otPhH > 0) {
+        earningsRows.push({
+          label: `OVERTIME (${otPhH} HRS)`,
+          amount: formatNum(calc.ot30Pay)
+        });
       }
       if (calc.allowance > 0) {
         earningsRows.push({ label: "ALLOWANCE", amount: formatNum(calc.allowance) });
@@ -2394,12 +2746,17 @@
         <div class="sck-slip-box">
           <!-- Copy Tag & Company Header -->
           <div class="flex justify-between items-start mb-1.5 gap-2">
-            <div>
-              <div style="font-size:14px; font-weight:700; letter-spacing:0.2px;">
-                SCK WOODEN INDUSTRIES SDN BHD <span style="font-size:10px; font-weight:400;">(200001026349 (528956-D))</span>
-              </div>
-              <div style="font-size:9px; color:#222;">
-                Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang
+            <div style="flex:1;">
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:2px;">
+                ${getSckLogoSVG(38)}
+                <div>
+                  <div style="font-size:13.5px; font-weight:700; letter-spacing:0.2px; line-height:1.15;">
+                    SCK WOODEN INDUSTRIES SDN BHD <span style="font-size:9.5px; font-weight:400;">(200001026349 (528956-D))</span>
+                  </div>
+                  <div style="font-size:9px; color:#222;">
+                    Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang
+                  </div>
+                </div>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 mt-1" style="font-size:10px; line-height:1.35;">
                 <div>
@@ -2523,6 +2880,32 @@
       const calc = calculateEmployeePayroll(emp);
       const cycle = getPayrollCycleInfo();
 
+      const otMonTueH = Number(emp.otMonTueHours ?? emp.ot15Hours) || 0;
+      const otWedThuSatH = Number(emp.otWedThuSatHours) || 0;
+      const otFriH = Number(emp.otFriHours) || 0;
+      const otRestH = Number(emp.ot20Hours) || 0;
+      const otPhH = Number(emp.ot30Hours) || 0;
+
+      const otBreakdownLines = [];
+      if (otMonTueH > 0 || calc.otMonTuePay > 0) {
+        otBreakdownLines.push(`OT Isnin & Selasa (${otMonTueH} jam): RM ${formatNum(calc.otMonTuePay)}`);
+      }
+      if (otWedThuSatH > 0 || calc.otWedThuSatPay > 0) {
+        otBreakdownLines.push(`OT Rabu, Khamis & Sabtu (${otWedThuSatH} jam): RM ${formatNum(calc.otWedThuSatPay)}`);
+      }
+      if (otFriH > 0 || calc.otFriPay > 0) {
+        otBreakdownLines.push(`OT Jumaat (${otFriH} jam): RM ${formatNum(calc.otFriPay)}`);
+      }
+      if (otRestH > 0 || calc.ot20Pay > 0) {
+        otBreakdownLines.push(`OT Hari Rehat / Ahad (${otRestH} jam): RM ${formatNum(calc.ot20Pay)}`);
+      }
+      if (otPhH > 0 || calc.ot30Pay > 0) {
+        otBreakdownLines.push(`OT Cuti Umum (${otPhH} jam): RM ${formatNum(calc.ot30Pay)}`);
+      }
+      const otWhatsAppText = otBreakdownLines.length > 0
+        ? otBreakdownLines.join("\n") + "\n"
+        : `Overtime (OT): RM 0.00\n`;
+
       const msg =
         `*PAYSLIP — SCK WOODEN INDUSTRIES SDN BHD*\n` +
         `Bulan: *${cycle.monthFullBM} ${cycle.year}*\n` +
@@ -2532,7 +2915,7 @@
         `Bank A/C: ${emp.bankAcc || "-"}\n` +
         `-----------------------------\n` +
         `Basic Salary/Wages: RM ${formatNum(calc.netEarnedBasic)}\n` +
-        `Overtime (OT): RM ${formatNum(calc.totalOTPay)}\n` +
+        otWhatsAppText +
         `Elaun & Lain-lain: RM ${formatNum(calc.allowance + calc.commission + calc.reward + calc.bonus)}\n` +
         `*TOTAL EARNING: RM ${formatNum(calc.grossPay)}*\n` +
         `-----------------------------\n` +
