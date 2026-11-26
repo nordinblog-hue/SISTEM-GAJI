@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Gaji & Pengurusan Payroll — SCK Wooden Industries Sdn Bhd</title>
+  <title>Sistem Gaji &amp; Pengurusan Payroll Malaysia</title>
 
   <!-- PWA & iOS Web App Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="SCK GAJI" />
+  <meta name="apple-mobile-web-app-title" content="SISTEM GAJI" />
   <meta name="theme-color" content="#065f46" />
 
   <!-- Tailwind CSS -->
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Dynamic iOS/iPadOS PWA Apple Touch Icon Generator 512x512 ("SCK GAJI") -->
+  <!-- Dynamic iOS/iPadOS PWA Apple Touch Icon Generator 512x512 -->
   <script>
     (function generateAppleTouchIcon() {
       try {
@@ -57,10 +57,10 @@
         ctx.strokeRect(26, 26, 460, 460);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '900 132px Inter, Arial, sans-serif';
+        ctx.font = '900 108px Inter, Arial, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('SCK', 256, 206);
+        ctx.fillText('PAY', 256, 206);
 
         ctx.fillStyle = '#fde68a';
         ctx.font = '800 64px Inter, Arial, sans-serif';
@@ -98,7 +98,7 @@
       background: rgba(148, 163, 184, 0.75);
     }
 
-    /* Official SCK Wooden Payslip Styling */
+    /* Universal Payslip Styling */
     .sck-slip-box {
       font-family: Arial, Helvetica, sans-serif;
       color: #000000;
@@ -220,8 +220,8 @@
       <div class="flex flex-wrap items-center justify-between py-3 gap-3">
         <!-- Brand & Company Header -->
         <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-amber-800 text-white flex items-center justify-center font-black text-lg shadow-md shrink-0">
-            SCK
+          <div id="header-brand-badge" class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-slate-800 text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
+            PAY
           </div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
@@ -232,8 +232,8 @@
                 Akta Kerja 1955 • Min RM1,700
               </span>
             </div>
-            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-              SCK WOODEN INDUSTRIES SDN BHD (200001026349 (528956-D)) • Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang
+            <p id="header-company-subtitle" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+              NAMA SYARIKAT ANDA SDN BHD • Tetapkan maklumat syarikat di Tab Tetapan
             </p>
           </div>
         </div>
@@ -336,7 +336,7 @@
             <i data-lucide="calendar-range" class="w-5 h-5 text-amber-300"></i>
           </div>
           <div>
-            <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-200">Kitaran Penggajian Rasmi Kilang (26 hb – 25 hb)</div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-200">Kitaran Penggajian Bulanan (26 hb – 25 hb)</div>
             <h2 id="dash-cutoff-title" class="text-base sm:text-lg font-extrabold text-white mt-0.5">
               Tempoh Gaji: 26 Okt 2026 – 25 Nov 2026 (NOVEMBER 2026)
             </h2>
@@ -453,7 +453,7 @@
           <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="text-base font-bold text-slate-900 dark:text-white">Ringkasan Kos Gaji Mengikut Kategori Pekerja</h2>
-              <p class="text-xs text-slate-500 dark:text-slate-400">SCK Wooden Industries Sdn Bhd • Rekod Semasa</p>
+              <p id="dash-table-company-sub" class="text-xs text-slate-500 dark:text-slate-400">Ringkasan Semasa Penggajian</p>
             </div>
             <div class="flex items-center gap-2">
               <button onclick="applyCycleWorkingDaysToDailyWorkers()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
@@ -490,7 +490,7 @@
               <i data-lucide="file-check-2" class="w-4 h-4 text-emerald-600"></i>
               <span>Pematuhan Polisi &amp; Akta Kerja 1955</span>
             </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Standard Pengiraan Rasmi SCK Wooden Industries</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Standard Pengiraan Rasmi Payroll Malaysia</p>
 
             <ul class="mt-4 space-y-2 text-xs">
               <li class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
@@ -928,12 +928,36 @@
               </select>
             </div>
             <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
-              <div class="font-bold text-slate-800 dark:text-slate-200">Ringkasan Klausa Cuti Kontrak SCK:</div>
+            <div class="font-bold text-slate-800 dark:text-slate-200">Maklumat Syarikat (Dipaparkan Pada Slip Gaji &amp; Laporan):</div>
+            <div>
+              <label class="block text-[11px] font-semibold mb-1">Nama Syarikat</label>
+              <input type="text" id="set-company-name" placeholder="Cth: NAMA SYARIKAT SDN BHD" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold mb-1">No. Pendaftaran Syarikat (SSM)</label>
+              <input type="text" id="set-company-reg" placeholder="Cth: 202401000000 (123456-X)" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold mb-1">Alamat Syarikat</label>
+              <input type="text" id="set-company-address" placeholder="Alamat penuh pejabat / kilang" class="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
+            </div>
+          </div>
+
+          <div class="space-y-4 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">3. Polisi Cuti Tahunan &amp; Sakit</h3>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Mod Kelayakan Cuti Tahunan (AL)</label>
+              <select id="set-al-policy" class="w-full px-3 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700">
+                <option value="CONTRACT">Polisi Kontrak (&lt;1thn: 0 | 1-2: 8 | 2-5: 12 | ≥5: 16)</option>
+                <option value="ACT1955">Akta Kerja 1955 (&lt;2thn: 8 | 2-5: 12 | ≥5: 16)</option>
+              </select>
+            </div>
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
+              <div class="font-bold text-slate-800 dark:text-slate-200">Ringkasan Klausa Cuti:</div>
               <p class="text-slate-600 dark:text-slate-400">• <strong>Kitaran Gaji:</strong> 26 hb bulan lepas hingga 25 hb bulan semasa.</p>
               <p class="text-slate-600 dark:text-slate-400">• <strong>MC Biasa:</strong> 14 hari (&lt;2 thn), 18 hari (2-5 thn), 22 hari (≥5 thn).</p>
               <p class="text-slate-600 dark:text-slate-400">• <strong>MC Hospitalisasi:</strong> Sehingga 60 hari setahun keseluruhan.</p>
               <p class="text-slate-600 dark:text-slate-400">• <strong>Cuti Kecemasan (EL):</strong> Maksimum 2 hari/tahun (ditolak daripada baki AL).</p>
-              <p class="text-slate-600 dark:text-slate-400">• <strong>Notis Berhenti:</strong> 8 minggu notis bertulis atau gaji ganti notis.</p>
             </div>
           </div>
         </div>
@@ -965,8 +989,8 @@
           <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 border-b border-slate-200 dark:border-slate-800 pb-1">A. Maklumat Peribadi, Jawatan &amp; Akaun Bank</h4>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label class="block font-semibold mb-1">ID Pekerja *</label>
-              <input type="text" id="edit-emp-code" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono" />
+              <label class="block font-semibold mb-1">Catatan (Opsional)</label>
+              <input type="text" id="edit-emp-note" placeholder="Jabatan / Unit / Catatan" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700" />
             </div>
             <div class="sm:col-span-2">
               <label class="block font-semibold mb-1">Nama Penuh (Seperti KP / Pasport) *</label>
@@ -1361,6 +1385,9 @@
     const INITIAL_EMPLOYEES = [];
 
     window.DEFAULT_SETTINGS = {
+      companyName: "NAMA SYARIKAT ANDA SDN BHD",
+      companyReg: "",
+      companyAddress: "",
       minWage: 1700.00,
       dailyRateStandard: 65.40,
       orpDays: 26,
@@ -1978,13 +2005,13 @@
         "Potongan Advance (RM)", "Potongan Lain (RM)"
       ];
       const sampleRow = [
-        "SCK-001", "GENERAL WORKERS (LOCAL)", "CONTOH NAMA PEKERJA", "900101-06-5001", "Malaysia", "36",
+        "EMP-001", "GENERAL WORKERS (LOCAL)", "CONTOH NAMA PEKERJA", "900101-06-5001", "Malaysia", "36",
         "1990-01-01", "2024-01-15", "OPERATOR KILANG", "003024738000",
         "0123456789", "", "DAILY", "65.40",
         "26", "0", "0", "0", "0",
         "0", "0"
       ];
-      downloadCSV("Templat_Import_Pekerja_SCK_Wooden.csv", [headers, sampleRow]);
+      downloadCSV("Templat_Import_Pekerja_Payroll.csv", [headers, sampleRow]);
       window.showToast("Templat CSV berjaya dimuat turun. Isi senarai pekerja anda dan klik 'Import CSV'.", "success");
     };
 
@@ -2048,7 +2075,7 @@
 
             importedList.push({
               id: `EMP-${Date.now()}-${i}`,
-              code: cols[0] || `SCK-${String(i).padStart(3, "0")}`,
+              code: cols[0] || `EMP-${String(i).padStart(3, "0")}`,
               category: (cols[1] || "GENERAL WORKERS (LOCAL)").toUpperCase(),
               name: (cols[2] || "").toUpperCase(),
               ic: cols[3] || "-",
@@ -2060,7 +2087,7 @@
               bankAcc: cols[9] || "",
               phone: cols[10] || "",
               note: (cols[11] || "").toUpperCase(),
-              address: "SCK WOODEN INDUSTRIES SDN BHD",
+              address: "",
               payType,
               basicSalary: isNaN(basicSalary) ? defaultBasic : basicSalary,
               daysWorked: cols[14] !== undefined && cols[14] !== "" ? Number(cols[14]) : cycle.workingDaysMonSat,
@@ -2111,6 +2138,31 @@
     window.refreshAllUI = function () {
       const cycle = getPayrollCycleInfo();
       const totalEmp = window.employees.length;
+      const compName = (window.settings.companyName || "NAMA SYARIKAT ANDA SDN BHD").trim();
+      const compReg = (window.settings.companyReg || "").trim();
+      const compAddr = (window.settings.companyAddress || "").trim();
+
+      const subtitleParts = [compName + (compReg ? ` (${compReg})` : "")];
+      if (compAddr) subtitleParts.push(compAddr);
+      else subtitleParts.push("Tetapkan nama & alamat syarikat di Tab 5 (Tetapan)");
+
+      const headerSub = document.getElementById("header-company-subtitle");
+      if (headerSub) headerSub.textContent = subtitleParts.join(" • ");
+
+      const dashTableSub = document.getElementById("dash-table-company-sub");
+      if (dashTableSub) dashTableSub.textContent = `${compName} • Rekod Semasa`;
+
+      const brandBadge = document.getElementById("header-brand-badge");
+      if (brandBadge) {
+        const initials = compName
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 3)
+          .map(w => w[0])
+          .join("")
+          .toUpperCase();
+        brandBadge.textContent = initials || "PAY";
+      }
 
       document.getElementById("badge-emp-count").textContent = totalEmp;
       document.getElementById("header-cutoff-badge").textContent = cycle.rangeTextBM;
@@ -2401,29 +2453,11 @@
       return buildMonthlyOfficialSlipHTML(emp, calc, cycle, copyBadgeText);
     }
 
-    // Grafik Vektor SVG Logo Rasmi SCK Wooden Industries Sdn Bhd
-    function getSckLogoSVG(heightPx = 38) {
-      return `
-        <svg height="${heightPx}" viewBox="0 0 360 155" xmlns="http://www.w3.org/2000/svg" style="display:block; width:auto; flex-shrink:0;">
-          <g fill="none" stroke="#b9975b" stroke-width="2.6">
-            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-48 118 76)" />
-            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-40 118 76)" />
-            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-32 118 76)" />
-            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-24 118 76)" />
-            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-16 118 76)" />
-            <rect x="46" y="4" width="76" height="76" rx="9" transform="rotate(-8 118 76)" />
-          </g>
-          <rect x="46" y="4" width="76" height="76" rx="9" fill="#b9975b" />
-          <text x="136" y="75" fill="#b9975b" font-family="Arial Black, Impact, Arial, sans-serif" font-weight="900" font-size="78" letter-spacing="4">SCK</text>
-          <rect x="136" y="88" width="216" height="27" fill="#b9975b" />
-          <text x="244" y="107" fill="#ffffff" font-family="Georgia, 'Times New Roman', serif" font-size="17" text-anchor="middle">Wooden Industries Sdn Bhd</text>
-          <text x="244" y="135" fill="#b9975b" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">(Company No.528956-D)</text>
-        </svg>
-      `;
-    }
-
-    // 1. FORMAT SLIP GAJI HARIAN (DAILY WAGES — SEPERTI SLIP OPERASI / AZILA BINTI AWANG)
+    // 1. FORMAT SLIP GAJI HARIAN (DAILY WAGES)
     function buildDailyOfficialSlipHTML(emp, calc, cycle, copyBadgeText) {
+      const compName = (window.settings.companyName || "NAMA SYARIKAT ANDA SDN BHD").toUpperCase();
+      const compReg = (window.settings.companyReg || "").trim();
+      const compAddr = (window.settings.companyAddress || "").trim();
       const deptLabel = emp.category && emp.category.startsWith("GENERAL") ? "OPERATION" : (emp.category || "OPERATION");
       const otMonTueH = Number(emp.otMonTueHours ?? emp.ot15Hours) || 0;
       const otWedThuSatH = Number(emp.otWedThuSatHours) || 0;
@@ -2536,16 +2570,11 @@
           <!-- Header Syarikat & Maklumat Pekerja Harian -->
           <div class="flex justify-between items-start mb-1 gap-2">
             <div style="flex:1;">
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
-                ${getSckLogoSVG(36)}
-                <div>
-                  <div style="font-size:13px; font-weight:700; line-height:1.15;">
-                    SCK WOODEN INDUSTRIES SDN BHD <span style="font-size:9px; font-weight:400;">(200001026349 (528956-D))</span>
-                  </div>
-                  <div style="font-size:8.5px; color:#222;">
-                    Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang
-                  </div>
+              <div style="margin-bottom:2px;">
+                <div style="font-size:13px; font-weight:700; line-height:1.15;">
+                  ${compName} ${compReg ? `<span style="font-size:9px; font-weight:400;">(${compReg})</span>` : ""}
                 </div>
+                ${compAddr ? `<div style="font-size:8.5px; color:#222;">${compAddr}</div>` : ""}
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-0.5" style="font-size:9.5px; line-height:1.35;">
                 <div>
@@ -2715,11 +2744,11 @@
             </div>
           </div>
         </div>
-      `;
-    }
-
-    // 2. FORMAT SLIP GAJI BULANAN (MONTHLY STAFF — SEPERTI SLIP MOHAMAD NORDIN BIN MOHAMMED LOT)
+    // 2. FORMAT SLIP GAJI BULANAN (MONTHLY STAFF)
     function buildMonthlyOfficialSlipHTML(emp, calc, cycle, copyBadgeText) {
+      const compName = (window.settings.companyName || "NAMA SYARIKAT ANDA SDN BHD").toUpperCase();
+      const compReg = (window.settings.companyReg || "").trim();
+      const compAddr = (window.settings.companyAddress || "").trim();
       const deptLabel = emp.category === "STAFF" ? "OFFICE STAFF" : emp.category;
       const basicLabel = emp.payType === "MONTHLY"
         ? "BASIC SALARY"
@@ -2808,16 +2837,11 @@
           <!-- Copy Tag & Company Header -->
           <div class="flex justify-between items-start mb-1.5 gap-2">
             <div style="flex:1;">
-              <div style="display:flex; align-items:center; gap:9px; margin-bottom:2px;">
-                ${getSckLogoSVG(38)}
-                <div>
-                  <div style="font-size:13.5px; font-weight:700; letter-spacing:0.2px; line-height:1.15;">
-                    SCK WOODEN INDUSTRIES SDN BHD <span style="font-size:9.5px; font-weight:400;">(200001026349 (528956-D))</span>
-                  </div>
-                  <div style="font-size:9px; color:#222;">
-                    Batu 27, Jalan Kuantan/Kemaman, Kampung Cherating, 26080 Kuantan, Pahang
-                  </div>
+              <div style="margin-bottom:2px;">
+                <div style="font-size:13.5px; font-weight:700; letter-spacing:0.2px; line-height:1.15;">
+                  ${compName} ${compReg ? `<span style="font-size:9.5px; font-weight:400;">(${compReg})</span>` : ""}
                 </div>
+                ${compAddr ? `<div style="font-size:9px; color:#222;">${compAddr}</div>` : ""}
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 mt-1" style="font-size:10px; line-height:1.35;">
                 <div>
@@ -2894,7 +2918,7 @@
             </div>
             <div class="text-right" style="font-size:8px; color:#333;">
               <div>Cetakan Komputer / Computer-Generated</div>
-              <div>SCK Wooden Industries Sdn Bhd • ${emp.code} • ${copyBadgeText}</div>
+              <div>${compName} • ${emp.code} • ${copyBadgeText}</div>
             </div>
           </div>
         </div>
@@ -3015,9 +3039,9 @@
       const otWhatsAppText = otBreakdownLines.length > 0
         ? otBreakdownLines.join("\n") + "\n"
         : `Overtime (OT): RM 0.00\n`;
-
+      const compName = (window.settings.companyName || "NAMA SYARIKAT ANDA SDN BHD").toUpperCase();
       const msg =
-        `*PAYSLIP — SCK WOODEN INDUSTRIES SDN BHD*\n` +
+        `*PAYSLIP — ${compName}*\n` +
         `Bulan: *${cycle.monthFullBM} ${cycle.year}*\n` +
         `Tempoh Gaji: *${cycle.rangeTextBM}*\n` +
         `Nama: *${emp.name}* (${emp.code})\n` +
@@ -3196,7 +3220,7 @@
       document.getElementById("modal-title").textContent = "Tambah Pekerja Baharu";
       document.getElementById("modal-subtitle").textContent = `Kitaran ${cycle.rangeTextBM} • Sila masukkan kadar upah atau gaji pokok pekerja`;
       document.getElementById("edit-emp-id").value = "";
-      document.getElementById("edit-emp-code").value = `SCK-${String(nextNum).padStart(3, "0")}`;
+      document.getElementById("edit-emp-code").value = `EMP-${String(nextNum).padStart(3, "0")}`;
       document.getElementById("edit-emp-name").value = "";
       document.getElementById("edit-emp-category").value = "GENERAL WORKERS (LOCAL)";
       document.getElementById("edit-emp-ic").value = "";
@@ -3208,7 +3232,7 @@
       document.getElementById("edit-emp-bank-acc").value = "";
       document.getElementById("edit-emp-phone").value = "";
       document.getElementById("edit-emp-note").value = "";
-      document.getElementById("edit-emp-address").value = "CHERATING, 26080 KUANTAN PAHANG";
+      document.getElementById("edit-emp-address").value = "";
 
       document.getElementById("edit-emp-paytype").value = "DAILY";
       document.getElementById("edit-emp-basic").value = "";
@@ -3337,6 +3361,13 @@
     // ===================================================================== -->
     function populateSettingsForm() {
       const s = window.settings;
+      const compNameEl = document.getElementById("set-company-name");
+      if (compNameEl) compNameEl.value = s.companyName || "";
+      const compRegEl = document.getElementById("set-company-reg");
+      if (compRegEl) compRegEl.value = s.companyReg || "";
+      const compAddrEl = document.getElementById("set-company-address");
+      if (compAddrEl) compAddrEl.value = s.companyAddress || "";
+
       document.getElementById("set-min-wage").value = s.minWage;
       document.getElementById("set-daily-rate").value = s.dailyRateStandard;
       document.getElementById("set-orp-days").value = s.orpDays;
@@ -3356,6 +3387,9 @@
 
     window.saveSettingsFromForm = function () {
       window.settings = {
+        companyName: (document.getElementById("set-company-name")?.value || "").trim() || "NAMA SYARIKAT ANDA SDN BHD",
+        companyReg: (document.getElementById("set-company-reg")?.value || "").trim(),
+        companyAddress: (document.getElementById("set-company-address")?.value || "").trim(),
         minWage: Number(document.getElementById("set-min-wage").value) || 1700,
         dailyRateStandard: Number(document.getElementById("set-daily-rate").value) || 65.40,
         orpDays: Number(document.getElementById("set-orp-days").value) || 26,
@@ -3372,6 +3406,10 @@
         socso24HourActive: document.getElementById("set-socso-24h").checked,
         alPolicy: document.getElementById("set-al-policy").value
       };
+      window.saveLocalState(true);
+      window.refreshAllUI();
+      window.showToast("Tetapan Syarikat & Polisi Akta Kerja berjaya disimpan dan dikira semula.", "success");
+    };
       window.saveLocalState(true);
       window.refreshAllUI();
       window.showToast("Tetapan Polisi & Akta Kerja berjaya disimpan dan dikira semula.", "success");
@@ -3426,7 +3464,7 @@
         ]);
       });
 
-      downloadCSV(`SCK_Wooden_Payroll_${cycle.year}_${String(cycle.month).padStart(2, "0")}.csv`, rows);
+      downloadCSV(`Laporan_Gaji_Payroll_${cycle.year}_${String(cycle.month).padStart(2, "0")}.csv`, rows);
       window.showToast("Fail CSV Laporan Gaji & Bank berjaya dimuat turun.", "success");
     };
 
@@ -3451,7 +3489,7 @@
         ]);
       });
 
-      downloadCSV(`SCK_Wooden_Caruman_Berkanun_${cycle.year}_${String(cycle.month).padStart(2, "0")}.csv`, rows);
+      downloadCSV(`Laporan_Caruman_Berkanun_${cycle.year}_${String(cycle.month).padStart(2, "0")}.csv`, rows);
       window.showToast("Laporan Caruman Berkanun berjaya dimuat turun.", "success");
     };
 
