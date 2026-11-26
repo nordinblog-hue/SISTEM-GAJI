@@ -3158,48 +3158,52 @@
       const emp = window.employees.find(e => e.id === empId);
       if (!emp) return;
 
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+      const setChecked = (id, val) => { const el = document.getElementById(id); if (el) el.checked = Boolean(val); };
+
       document.getElementById("modal-title").textContent = `Edit Gaji & Rekod: ${emp.name}`;
       document.getElementById("modal-subtitle").textContent = `${emp.code} • ${emp.position} (${emp.category})`;
-      document.getElementById("edit-emp-id").value = emp.id;
-      document.getElementById("edit-emp-code").value = emp.code;
-      document.getElementById("edit-emp-name").value = emp.name;
-      document.getElementById("edit-emp-category").value = emp.category || "GENERAL WORKERS (LOCAL)";
-      document.getElementById("edit-emp-ic").value = emp.ic;
-      document.getElementById("edit-emp-position").value = emp.position;
-      document.getElementById("edit-emp-nationality").value = emp.nationality || "Malaysia";
-      document.getElementById("edit-emp-dob").value = emp.dob || "";
-      document.getElementById("edit-emp-age").value = emp.age;
-      document.getElementById("edit-emp-join").value = emp.joinDate;
-      document.getElementById("edit-emp-bank-acc").value = emp.bankAcc || "";
-      document.getElementById("edit-emp-phone").value = emp.phone || "";
-      document.getElementById("edit-emp-note").value = emp.note || "";
-      document.getElementById("edit-emp-address").value = emp.address || "";
+      setVal("edit-emp-id", emp.id);
+      setVal("edit-emp-code", emp.code);
+      setVal("edit-emp-name", emp.name);
+      setVal("edit-emp-category", emp.category || "GENERAL WORKERS (LOCAL)");
+      setVal("edit-emp-ic", emp.ic);
+      setVal("edit-emp-position", emp.position);
+      setVal("edit-emp-nationality", emp.nationality || "Malaysia");
+      setVal("edit-emp-dob", emp.dob || "");
+      setVal("edit-emp-age", emp.age);
+      setVal("edit-emp-join", emp.joinDate);
+      setVal("edit-emp-bank-acc", emp.bankAcc || "");
+      setVal("edit-emp-phone", emp.phone || "");
+      setVal("edit-emp-note", emp.note || "");
+      setVal("edit-emp-address", emp.address || "");
 
-      document.getElementById("edit-emp-paytype").value = emp.payType;
-      document.getElementById("edit-emp-basic").value = emp.basicSalary;
-      document.getElementById("edit-emp-days-worked").value = emp.daysWorked ?? 26;
-      document.getElementById("edit-emp-ot-mon-tue").value = emp.otMonTueHours ?? emp.ot15Hours ?? 0;
-      document.getElementById("edit-emp-ot-wed-thu-sat").value = emp.otWedThuSatHours ?? 0;
-      document.getElementById("edit-emp-ot-fri").value = emp.otFriHours ?? 0;
-      document.getElementById("edit-emp-ot20").value = emp.ot20Hours ?? 0;
-      document.getElementById("edit-emp-ot30").value = emp.ot30Hours ?? 0;
-      document.getElementById("edit-emp-allowance").value = emp.allowance ?? 0;
-      document.getElementById("edit-emp-commission").value = emp.commission ?? 0;
-      document.getElementById("edit-emp-reward").value = emp.reward ?? 0;
-      document.getElementById("edit-emp-bonus").value = emp.bonus ?? 0;
-      document.getElementById("edit-emp-encash-al").value = emp.encashAlDays ?? 0;
-      document.getElementById("edit-emp-angpaw").value = emp.angpaw ?? 0;
+      setVal("edit-emp-paytype", emp.payType);
+      setVal("edit-emp-basic", emp.basicSalary);
+      setVal("edit-emp-days-worked", emp.daysWorked ?? 26);
+      setVal("edit-emp-upl", emp.uplDays ?? 0);
+      setVal("edit-emp-ot-mon-tue", emp.otMonTueHours ?? emp.ot15Hours ?? 0);
+      setVal("edit-emp-ot-wed-thu-sat", emp.otWedThuSatHours ?? 0);
+      setVal("edit-emp-ot-fri", emp.otFriHours ?? 0);
+      setVal("edit-emp-ot20", emp.ot20Hours ?? 0);
+      setVal("edit-emp-ot30", emp.ot30Hours ?? 0);
+      setVal("edit-emp-allowance", emp.allowance ?? 0);
+      setVal("edit-emp-commission", emp.commission ?? 0);
+      setVal("edit-emp-reward", emp.reward ?? 0);
+      setVal("edit-emp-bonus", emp.bonus ?? 0);
+      setVal("edit-emp-encash-al", emp.encashAlDays ?? 0);
+      setVal("edit-emp-angpaw", emp.angpaw ?? 0);
 
       const lv = calculateLeaveEntitlement(emp);
-      document.getElementById("edit-emp-al-entitled").value = emp.alEntitledOverride ?? lv.alEntitled;
-      document.getElementById("edit-emp-al-taken").value = emp.alTaken ?? 0;
-      document.getElementById("edit-emp-el-taken").value = emp.elTaken ?? 0;
-      document.getElementById("edit-emp-mc-taken").value = emp.mcTaken ?? 0;
-      document.getElementById("edit-emp-tax-status").value = emp.taxStatus || "SINGLE";
-      document.getElementById("edit-emp-advance").value = emp.advanceDed ?? 0;
-      document.getElementById("edit-emp-other-ded").value = emp.otherDed ?? 0;
-      document.getElementById("edit-emp-pcb-manual").value = emp.pcbManual ?? "";
-      document.getElementById("edit-emp-epf-11").checked = emp.epfFull !== false;
+      setVal("edit-emp-al-entitled", emp.alEntitledOverride ?? lv.alEntitled);
+      setVal("edit-emp-al-taken", emp.alTaken ?? 0);
+      setVal("edit-emp-el-taken", emp.elTaken ?? 0);
+      setVal("edit-emp-mc-taken", emp.mcTaken ?? 0);
+      setVal("edit-emp-tax-status", emp.taxStatus || "SINGLE");
+      setVal("edit-emp-advance", emp.advanceDed ?? 0);
+      setVal("edit-emp-other-ded", emp.otherDed ?? 0);
+      setVal("edit-emp-pcb-manual", emp.pcbManual ?? "");
+      setChecked("edit-emp-epf-11", emp.epfFull !== false);
 
       document.getElementById("btn-delete-emp").classList.remove("hidden");
       togglePayTypeLabels();
@@ -3210,47 +3214,51 @@
     window.openAddEmployeeModal = function () {
       const nextNum = window.employees.length + 1;
       const cycle = getPayrollCycleInfo();
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+      const setChecked = (id, val) => { const el = document.getElementById(id); if (el) el.checked = Boolean(val); };
+
       document.getElementById("modal-title").textContent = "Tambah Pekerja Baharu";
       document.getElementById("modal-subtitle").textContent = `Kitaran ${cycle.rangeTextBM} • Sila masukkan kadar upah atau gaji pokok pekerja`;
-      document.getElementById("edit-emp-id").value = "";
-      document.getElementById("edit-emp-code").value = `EMP-${String(nextNum).padStart(3, "0")}`;
-      document.getElementById("edit-emp-name").value = "";
-      document.getElementById("edit-emp-category").value = "GENERAL WORKERS (LOCAL)";
-      document.getElementById("edit-emp-ic").value = "";
-      document.getElementById("edit-emp-position").value = "GENERAL WORKER";
-      document.getElementById("edit-emp-nationality").value = "Malaysia";
-      document.getElementById("edit-emp-dob").value = "2000-01-01";
-      document.getElementById("edit-emp-age").value = 26;
-      document.getElementById("edit-emp-join").value = "2026-01-01";
-      document.getElementById("edit-emp-bank-acc").value = "";
-      document.getElementById("edit-emp-phone").value = "";
-      document.getElementById("edit-emp-note").value = "";
-      document.getElementById("edit-emp-address").value = "";
+      setVal("edit-emp-id", "");
+      setVal("edit-emp-code", `EMP-${String(nextNum).padStart(3, "0")}`);
+      setVal("edit-emp-name", "");
+      setVal("edit-emp-category", "GENERAL WORKERS (LOCAL)");
+      setVal("edit-emp-ic", "");
+      setVal("edit-emp-position", "GENERAL WORKER");
+      setVal("edit-emp-nationality", "Malaysia");
+      setVal("edit-emp-dob", "2000-01-01");
+      setVal("edit-emp-age", 26);
+      setVal("edit-emp-join", "2026-01-01");
+      setVal("edit-emp-bank-acc", "");
+      setVal("edit-emp-phone", "");
+      setVal("edit-emp-note", "");
+      setVal("edit-emp-address", "");
 
-      document.getElementById("edit-emp-paytype").value = "DAILY";
-      document.getElementById("edit-emp-basic").value = "";
-      document.getElementById("edit-emp-days-worked").value = cycle.workingDaysMonSat || 26;
-      document.getElementById("edit-emp-ot-mon-tue").value = 0;
-      document.getElementById("edit-emp-ot-wed-thu-sat").value = 0;
-      document.getElementById("edit-emp-ot-fri").value = 0;
-      document.getElementById("edit-emp-ot20").value = 0;
-      document.getElementById("edit-emp-ot30").value = 0;
-      document.getElementById("edit-emp-allowance").value = 0;
-      document.getElementById("edit-emp-commission").value = 0;
-      document.getElementById("edit-emp-reward").value = 0;
-      document.getElementById("edit-emp-bonus").value = 0;
-      document.getElementById("edit-emp-encash-al").value = 0;
-      document.getElementById("edit-emp-angpaw").value = 0;
+      setVal("edit-emp-paytype", "DAILY");
+      setVal("edit-emp-basic", "");
+      setVal("edit-emp-days-worked", cycle.workingDaysMonSat || 26);
+      setVal("edit-emp-upl", 0);
+      setVal("edit-emp-ot-mon-tue", 0);
+      setVal("edit-emp-ot-wed-thu-sat", 0);
+      setVal("edit-emp-ot-fri", 0);
+      setVal("edit-emp-ot20", 0);
+      setVal("edit-emp-ot30", 0);
+      setVal("edit-emp-allowance", 0);
+      setVal("edit-emp-commission", 0);
+      setVal("edit-emp-reward", 0);
+      setVal("edit-emp-bonus", 0);
+      setVal("edit-emp-encash-al", 0);
+      setVal("edit-emp-angpaw", 0);
 
-      document.getElementById("edit-emp-al-entitled").value = 0;
-      document.getElementById("edit-emp-al-taken").value = 0;
-      document.getElementById("edit-emp-el-taken").value = 0;
-      document.getElementById("edit-emp-mc-taken").value = 0;
-      document.getElementById("edit-emp-tax-status").value = "SINGLE";
-      document.getElementById("edit-emp-advance").value = 0;
-      document.getElementById("edit-emp-other-ded").value = 0;
-      document.getElementById("edit-emp-pcb-manual").value = "";
-      document.getElementById("edit-emp-epf-11").checked = true;
+      setVal("edit-emp-al-entitled", 0);
+      setVal("edit-emp-al-taken", 0);
+      setVal("edit-emp-el-taken", 0);
+      setVal("edit-emp-mc-taken", 0);
+      setVal("edit-emp-tax-status", "SINGLE");
+      setVal("edit-emp-advance", 0);
+      setVal("edit-emp-other-ded", 0);
+      setVal("edit-emp-pcb-manual", "");
+      setChecked("edit-emp-epf-11", true);
 
       document.getElementById("btn-delete-emp").classList.add("hidden");
       togglePayTypeLabels();
@@ -3263,45 +3271,48 @@
     };
 
     function getModalFormObject() {
+      const getVal = (id, fallback = "") => { const el = document.getElementById(id); return el ? el.value : fallback; };
+      const getChecked = (id, fallback = true) => { const el = document.getElementById(id); return el ? el.checked : fallback; };
+
       return {
-        id: document.getElementById("edit-emp-id").value || `EMP-${Date.now()}`,
-        code: document.getElementById("edit-emp-code").value.trim(),
-        category: document.getElementById("edit-emp-category").value,
-        name: document.getElementById("edit-emp-name").value.trim().toUpperCase(),
-        ic: document.getElementById("edit-emp-ic").value.trim(),
-        position: document.getElementById("edit-emp-position").value.trim().toUpperCase(),
-        nationality: document.getElementById("edit-emp-nationality").value.trim(),
-        dob: document.getElementById("edit-emp-dob").value,
-        age: Number(document.getElementById("edit-emp-age").value) || 28,
-        joinDate: document.getElementById("edit-emp-join").value,
-        bankAcc: document.getElementById("edit-emp-bank-acc").value.trim(),
-        phone: document.getElementById("edit-emp-phone").value.trim(),
-        note: document.getElementById("edit-emp-note").value.trim().toUpperCase(),
-        address: document.getElementById("edit-emp-address").value.trim().toUpperCase(),
-        payType: document.getElementById("edit-emp-paytype").value,
-        basicSalary: Number(document.getElementById("edit-emp-basic").value) || 0,
-        daysWorked: Number(document.getElementById("edit-emp-days-worked").value) || 0,
-        uplDays: Number(document.getElementById("edit-emp-upl").value) || 0,
-        otMonTueHours: Number(document.getElementById("edit-emp-ot-mon-tue").value) || 0,
-        otWedThuSatHours: Number(document.getElementById("edit-emp-ot-wed-thu-sat").value) || 0,
-        otFriHours: Number(document.getElementById("edit-emp-ot-fri").value) || 0,
-        ot20Hours: Number(document.getElementById("edit-emp-ot20").value) || 0,
-        ot30Hours: Number(document.getElementById("edit-emp-ot30").value) || 0,
-        allowance: Number(document.getElementById("edit-emp-allowance").value) || 0,
-        commission: Number(document.getElementById("edit-emp-commission").value) || 0,
-        reward: Number(document.getElementById("edit-emp-reward").value) || 0,
-        bonus: Number(document.getElementById("edit-emp-bonus").value) || 0,
-        encashAlDays: Number(document.getElementById("edit-emp-encash-al").value) || 0,
-        angpaw: Number(document.getElementById("edit-emp-angpaw").value) || 0,
-        alEntitledOverride: Number(document.getElementById("edit-emp-al-entitled").value) || 0,
-        alTaken: Number(document.getElementById("edit-emp-al-taken").value) || 0,
-        elTaken: Number(document.getElementById("edit-emp-el-taken").value) || 0,
-        mcTaken: Number(document.getElementById("edit-emp-mc-taken").value) || 0,
-        taxStatus: document.getElementById("edit-emp-tax-status").value,
-        advanceDed: Number(document.getElementById("edit-emp-advance").value) || 0,
-        otherDed: Number(document.getElementById("edit-emp-other-ded").value) || 0,
-        pcbManual: document.getElementById("edit-emp-pcb-manual").value,
-        epfFull: document.getElementById("edit-emp-epf-11").checked
+        id: getVal("edit-emp-id") || `EMP-${Date.now()}`,
+        code: getVal("edit-emp-code").trim(),
+        category: getVal("edit-emp-category", "GENERAL WORKERS (LOCAL)"),
+        name: getVal("edit-emp-name").trim().toUpperCase(),
+        ic: getVal("edit-emp-ic").trim(),
+        position: getVal("edit-emp-position").trim().toUpperCase(),
+        nationality: getVal("edit-emp-nationality").trim(),
+        dob: getVal("edit-emp-dob"),
+        age: Number(getVal("edit-emp-age")) || 28,
+        joinDate: getVal("edit-emp-join"),
+        bankAcc: getVal("edit-emp-bank-acc").trim(),
+        phone: getVal("edit-emp-phone").trim(),
+        note: getVal("edit-emp-note").trim().toUpperCase(),
+        address: getVal("edit-emp-address").trim().toUpperCase(),
+        payType: getVal("edit-emp-paytype", "DAILY"),
+        basicSalary: Number(getVal("edit-emp-basic")) || 0,
+        daysWorked: Number(getVal("edit-emp-days-worked")) || 0,
+        uplDays: Number(getVal("edit-emp-upl")) || 0,
+        otMonTueHours: Number(getVal("edit-emp-ot-mon-tue")) || 0,
+        otWedThuSatHours: Number(getVal("edit-emp-ot-wed-thu-sat")) || 0,
+        otFriHours: Number(getVal("edit-emp-ot-fri")) || 0,
+        ot20Hours: Number(getVal("edit-emp-ot20")) || 0,
+        ot30Hours: Number(getVal("edit-emp-ot30")) || 0,
+        allowance: Number(getVal("edit-emp-allowance")) || 0,
+        commission: Number(getVal("edit-emp-commission")) || 0,
+        reward: Number(getVal("edit-emp-reward")) || 0,
+        bonus: Number(getVal("edit-emp-bonus")) || 0,
+        encashAlDays: Number(getVal("edit-emp-encash-al")) || 0,
+        angpaw: Number(getVal("edit-emp-angpaw")) || 0,
+        alEntitledOverride: Number(getVal("edit-emp-al-entitled")) || 0,
+        alTaken: Number(getVal("edit-emp-al-taken")) || 0,
+        elTaken: Number(getVal("edit-emp-el-taken")) || 0,
+        mcTaken: Number(getVal("edit-emp-mc-taken")) || 0,
+        taxStatus: getVal("edit-emp-tax-status", "SINGLE"),
+        advanceDed: Number(getVal("edit-emp-advance")) || 0,
+        otherDed: Number(getVal("edit-emp-other-ded")) || 0,
+        pcbManual: getVal("edit-emp-pcb-manual"),
+        epfFull: getChecked("edit-emp-epf-11", true)
       };
     }
 
